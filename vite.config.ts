@@ -7,9 +7,9 @@ export default defineConfig({
     server: {
         proxy: {
             '/api/gtfs': {
-                target: 'https://www.myridebarrie.ca/gtfs',
+                target: 'https://www.myridebarrie.ca/gtfs/GTFS_VehiclePositions.pb',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api\/gtfs/, ''),
+                ignorePath: true, // This ensures we just hit the target URL directly
             },
         },
     },

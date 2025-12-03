@@ -11,7 +11,7 @@ export interface VehiclePosition {
 
 export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
     try {
-        const response = await axios.get('/api/gtfs/GTFS_VehiclePositions.pb', {
+        const response = await axios.get('/api/gtfs', {
             responseType: 'arraybuffer',
         });
 
