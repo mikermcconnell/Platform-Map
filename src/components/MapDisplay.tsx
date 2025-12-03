@@ -166,9 +166,9 @@ const MapDisplay: React.FC = () => {
                         // South: 135 to 225 (approx) -> using > 90 and < 270 covers general South
                         // Let's be specific to N/S as requested
                         if (v.bearing > 270 || v.bearing <= 90) {
-                            displayRouteId += ' N';
+                            displayRouteId += ' NB';
                         } else {
-                            displayRouteId += ' S';
+                            displayRouteId += ' SB';
                         }
                     }
 
