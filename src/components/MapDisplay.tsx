@@ -161,14 +161,20 @@ const MapDisplay: React.FC = () => {
 
                     // Determine Direction for Route 8 (8A/8B)
                     let displayRouteId = v.routeId || '';
-                    if ((v.routeId === '8A' || v.routeId === '8B') && v.bearing !== undefined) {
-                        // North: 315 to 45 (approx) -> using > 270 or < 90 covers general North
-                        // South: 135 to 225 (approx) -> using > 90 and < 270 covers general South
-                        // Let's be specific to N/S as requested
-                        if (v.bearing > 270 || v.bearing <= 90) {
-                            displayRouteId += ' NB';
-                        } else {
-                            displayRouteId += ' SB';
+                    if ((v.routeId === '8A' || v.routeId === '8B')) {
+                        // Priority: Use GTFS direction_id if available (Stable)
+                        if (v.directionId !== undefined) {
+                            // Usually 0 = Outbound (North?), 1 = Inbound (South?)
+                            // We will try this mapping. If swapped, user can correct.
+                            displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
+                        }
+                        // Fallback: Use Bearing (Instantaneous)
+                        else if (v.bearing !== undefined) {
+                            if (v.bearing > 270 || v.bearing <= 90) {
+                                displayRouteId += ' NB';
+                            } else {
+                                displayRouteId += ' SB';
+                            }
                         }
                     }
 

@@ -6,6 +6,7 @@ export interface VehiclePosition {
     lat: number;
     lon: number;
     routeId?: string;
+    directionId?: number;
     bearing?: number;
 }
 
@@ -32,6 +33,7 @@ export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
                     lat: entity.vehicle.position.latitude as number,
                     lon: entity.vehicle.position.longitude as number,
                     routeId: entity.vehicle.trip?.routeId || undefined,
+                    directionId: entity.vehicle.trip?.directionId,
                     bearing: entity.vehicle.position.bearing || 0,
                 });
             }
