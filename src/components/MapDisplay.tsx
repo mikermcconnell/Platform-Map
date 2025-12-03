@@ -159,6 +159,19 @@ const MapDisplay: React.FC = () => {
                     const pos = getPixelPosition(v.lat, v.lon);
                     const routeColor = (v.routeId && ROUTE_COLORS[v.routeId]) ? ROUTE_COLORS[v.routeId] : DEFAULT_COLOR;
 
+                    // Determine Direction for Route 8 (8A/8B)
+                    let displayRouteId = v.routeId || '';
+                    if ((v.routeId === '8A' || v.routeId === '8B') && v.bearing !== undefined) {
+                        // North: 315 to 45 (approx) -> using > 270 or < 90 covers general North
+                        // South: 135 to 225 (approx) -> using > 90 and < 270 covers general South
+                        // Let's be specific to N/S as requested
+                        if (v.bearing > 270 || v.bearing <= 90) {
+                            displayRouteId += ' N';
+                        } else {
+                            displayRouteId += ' S';
+                        }
+                    }
+
                     return (
                         <div
                             key={v.id}
@@ -175,14 +188,6 @@ const MapDisplay: React.FC = () => {
                                     alt="Bus"
                                     className="w-full h-full object-cover"
                                 />
-                                {v.routeId && (
-                                    <div
-                                        className="absolute bottom-0 left-0 right-0 text-white text-xs font-bold text-center py-1 opacity-90"
-                                        style={{ backgroundColor: routeColor }}
-                                    >
-                                        {v.routeId}
-                                    </div>
-                                )}
                             </div>
                             {/* Large Floating Route Label for TV Visibility */}
                             {v.routeId && (
@@ -190,7 +195,7 @@ const MapDisplay: React.FC = () => {
                                     className="absolute -top-10 left-1/2 transform -translate-x-1/2 text-white text-xl font-bold px-3 py-1 rounded-lg shadow-md border-2 border-white z-20 whitespace-nowrap"
                                     style={{ backgroundColor: routeColor }}
                                 >
-                                    {v.routeId}
+                                    {displayRouteId}
                                 </div>
                             )}
                         </div>
