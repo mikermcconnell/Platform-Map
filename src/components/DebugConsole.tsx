@@ -1,46 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { subscribeLogs, LogEntry } from '../debug';
 
 const DebugConsole: React.FC = () => {
-    const [logs, setLogs] = useState<string[]>([]);
+    const [logs, setLogs] = useState<LogEntry[]>([]);
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
-        const originalLog = console.log;
-        const originalWarn = console.warn;
-        const originalError = console.error;
-
-        const addLog = (type: string, args: any[]) => {
-            const message = args.map(arg =>
-                typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-            ).join(' ');
-            setLogs(prev => [`[${type}] ${message}`, ...prev].slice(0, 50));
-        };
-
-        console.log = (...args) => {
-            originalLog(...args);
-            addLog('LOG', args);
-        };
-
-        console.warn = (...args) => {
-            originalWarn(...args);
-            addLog('WARN', args);
-        };
-
-        console.error = (...args) => {
-            originalError(...args);
-            addLog('ERROR', args);
-        };
-
-        window.onerror = (message, source, lineno, colno, error) => {
-            addLog('WINDOW_ERROR', [`${message} at ${source}:${lineno}:${colno}`, error]);
-            return false;
-        };
-
-        return () => {
-            console.log = originalLog;
-            console.warn = originalWarn;
-            console.error = originalError;
-        };
+        return subscribeLogs(setLogs);
     }, []);
 
     if (!isVisible) return <button onClick={() => setIsVisible(true)} className="fixed bottom-0 right-0 bg-red-500 text-white p-2 z-50">Show Debug</button>;
@@ -52,14 +18,13 @@ const DebugConsole: React.FC = () => {
                 <div className="space-x-2">
                     <button onClick={() => console.log('Test Log Works')} className="bg-blue-700 px-2 py-1 rounded">Test Log</button>
                     <button onClick={() => { throw new Error('Test Error') }} className="bg-red-700 px-2 py-1 rounded">Test Error</button>
-                    <button onClick={() => setLogs([])} className="bg-gray-700 px-2 py-1 rounded">Clear</button>
                     <button onClick={() => setIsVisible(false)} className="bg-gray-700 px-2 py-1 rounded">Hide</button>
                 </div>
             </div>
             <div className="mt-2">
                 {logs.map((log, i) => (
                     <div key={i} className="border-b border-gray-800 py-0.5 break-words">
-                        {log}
+                        <span className="text-gray-500">[{log.timestamp}]</span> <span className={`font-bold ${log.type === 'ERROR' ? 'text-red-500' : log.type === 'WARN' ? 'text-yellow-500' : 'text-green-400'}`}>{log.type}</span>: {log.message}
                     </div>
                 ))}
             </div>

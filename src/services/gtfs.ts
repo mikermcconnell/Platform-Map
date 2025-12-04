@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 export interface VehiclePosition {
@@ -12,16 +11,18 @@ export interface VehiclePosition {
 
 export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
     try {
-        const response = await axios.get('/api/gtfs', {
-            responseType: 'arraybuffer',
-        });
+        const response = await fetch('/api/gtfs');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const buffer = await response.arrayBuffer();
 
         // Access FeedMessage from the default export or the namespace
         // @ts-ignore - The types for this library can be tricky
         const FeedMessage = GtfsRealtimeBindings.transit_realtime.FeedMessage;
 
         // Use decode instead of read, and pass the Uint8Array directly
-        const feed = FeedMessage.decode(new Uint8Array(response.data));
+        const feed = FeedMessage.decode(new Uint8Array(buffer));
 
         const vehicles: VehiclePosition[] = [];
 
