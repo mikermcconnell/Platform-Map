@@ -109,6 +109,7 @@ const MapDisplay: React.FC = () => {
     const mapRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        console.log(`MapDisplay Mounted. Viewport: ${window.innerWidth}x${window.innerHeight}`);
         // Calculate Affine Matrix from hardcoded data
         const matrix = solveAffine(CALIBRATION_DATA);
         if (matrix) {
@@ -152,6 +153,8 @@ const MapDisplay: React.FC = () => {
                     src="/assets/map.png"
                     alt="Platform Map"
                     className="w-full h-full object-contain"
+                    onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
+                    onLoad={() => console.log("Map image loaded successfully")}
                 />
 
                 {/* Render Vehicles */}
