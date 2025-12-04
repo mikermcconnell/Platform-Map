@@ -104,6 +104,7 @@ const solveAffine = (points: CalibrationPoint[]) => {
 };
 
 const MapDisplay: React.FC = () => {
+    console.log("MapDisplay: Render Cycle Started");
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);

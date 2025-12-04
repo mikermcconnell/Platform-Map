@@ -50,6 +50,8 @@ const DebugConsole: React.FC = () => {
             <div className="flex justify-between items-center sticky top-0 bg-black bg-opacity-90 p-1 border-b border-green-700 pointer-events-auto">
                 <span>Debug Console</span>
                 <div className="space-x-2">
+                    <button onClick={() => console.log('Test Log Works')} className="bg-blue-700 px-2 py-1 rounded">Test Log</button>
+                    <button onClick={() => { throw new Error('Test Error') }} className="bg-red-700 px-2 py-1 rounded">Test Error</button>
                     <button onClick={() => setLogs([])} className="bg-gray-700 px-2 py-1 rounded">Clear</button>
                     <button onClick={() => setIsVisible(false)} className="bg-gray-700 px-2 py-1 rounded">Hide</button>
                 </div>
