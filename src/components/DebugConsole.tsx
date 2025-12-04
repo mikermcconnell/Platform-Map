@@ -6,6 +6,8 @@ const DebugConsole: React.FC = () => {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
+        console.log("User Agent:", navigator.userAgent);
+        console.log("Promise support:", typeof Promise);
         return subscribeLogs(setLogs);
     }, []);
 
