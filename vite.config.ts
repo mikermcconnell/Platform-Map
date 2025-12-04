@@ -7,7 +7,9 @@ export default defineConfig({
     plugins: [
         react(),
         legacy({
-            targets: ['chrome >= 58', 'safari >= 11'],
+            targets: ['chrome >= 38', 'safari >= 11'],
+            additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+            polyfills: ['es.promise', 'es.symbol', 'es.array.iterator', 'es.object.assign'],
         }),
     ],
     server: {
