@@ -30,6 +30,8 @@
     }
 
     // Temporary Calibration Click Handler
+    // Temporary Calibration Click Handler (Removed for Production)
+    /*
     document.addEventListener('click', function (e) {
         var mapImage = document.getElementById('map-image');
         if (e.target === mapImage) {
@@ -41,6 +43,7 @@
             alert('Calibration Point:\nX: ' + x.toFixed(4) + '\nY: ' + y.toFixed(4));
         }
     });
+    */
 
     // =====================================================
     // Route Colors (matching original React app)
@@ -65,10 +68,10 @@
     // Calibration Data (GPS to Screen %)
     // =====================================================
     var CALIBRATION_DATA = [
-        { lat: 44.373667, lon: -79.687722, x: 81.86, y: 60.24 },   // Pick-up/Drop-off
-        { lat: 44.373833, lon: -79.689139, x: 57.13, y: 59.06 },   // Platform 2
-        { lat: 44.374250, lon: -79.689750, x: 42.11, y: 45.225 },  // Platform 6
-        { lat: 44.373528, lon: -79.691139, x: 17.34, y: 74.53 }    // Platform 14
+        { lat: 44.373667, lon: -79.687722, x: 93.6916, y: 57.1899 },   // Pick-up/Drop-off
+        { lat: 44.373833, lon: -79.689139, x: 62.0475, y: 54.1164 },   // Platform 2
+        { lat: 44.374250, lon: -79.689750, x: 42.0260, y: 38.5291 },   // Platform 6
+        { lat: 44.373528, lon: -79.691139, x: 7.7520, y: 80.5708 }     // Platform 14
     ];
 
     // =====================================================
