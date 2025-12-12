@@ -7,13 +7,13 @@
  * - NO async/await (use .then())
  * - NO template literals (use string concatenation)
  * - NO destructuring, spread, etc.
+ * - NO 'use strict' (can cause parsing issues on Netcast)
  * 
  * This file will be transpiled by Babel to ES5, but we write it
  * in a compatible style to minimize transformation issues.
  */
 
 (function () {
-    'use strict';
 
     // =====================================================
     // Status Display (for debugging on TV)

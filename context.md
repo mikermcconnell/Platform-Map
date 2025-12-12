@@ -3,11 +3,18 @@
 ## Overview
 This application is designed to run on an LG Smart TV (via web browser) to display a static platform map of the Barrie Allandale Transit Terminal. It overlays real-time bus positions using data from the MyRideBarrie GTFS feed.
 
-## Architecture
-- **Framework**: React + Vite + TypeScript
-- **Styling**: Tailwind CSS
-- **Data Source**: GTFS-Realtime Protocol Buffers (`GTFS_VehiclePositions.pb`)
-- **Proxy**: Vite dev server proxy is configured to bypass CORS during development/local usage.
+## LG TV Browser Information
+- **User Agent**: `Mozilla/5.0 (Linux; Netcast; U) AppleWebKit/537.36 (KHTML, like Gecko)`
+- **Platform**: LG Netcast (older than webOS)
+- **WebKit Version**: 537.36 (approximately Chrome 28-38 era)
+- **Key Limitations**: No ES6+, limited fetch support, no WebGL
+
+## Architecture (Updated for TV Compatibility)
+- **Framework**: Vanilla JavaScript (ES5-compatible)
+- **Build**: esbuild + Babel (targeting Chrome 38)
+- **Styling**: Plain CSS (no Tailwind)
+- **Data Source**: GTFS-Realtime via server-side API (`/api/vehicles`)
+- **Server**: Vercel serverless function decodes Protobuf → returns JSON
 
 ## Key Components
 
