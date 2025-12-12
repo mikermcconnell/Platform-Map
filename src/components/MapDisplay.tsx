@@ -155,7 +155,42 @@ const MapDisplay: React.FC = () => {
                     alt="Platform Map"
                     className="map-image"
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
-                    onLoad={() => console.log("Map image loaded successfully")}
+                    onLoad={(e) => {
+                        console.log("Map image loaded successfully");
+                        const img = e.currentTarget;
+                        const updateDimensions = () => {
+                            if (!mapRef.current) return;
+                            const screenW = window.innerWidth;
+                            const screenH = window.innerHeight;
+                            const screenRatio = screenW / screenH;
+                            const imgRatio = img.naturalWidth / img.naturalHeight;
+
+                            let width, height, top, left;
+
+                            if (imgRatio > screenRatio) {
+                                // Image is wider than screen (fit width)
+                                width = screenW;
+                                height = screenW / imgRatio;
+                                left = 0;
+                                top = (screenH - height) / 2;
+                            } else {
+                                // Image is taller than screen (fit height)
+                                height = screenH;
+                                width = screenH * imgRatio;
+                                top = 0;
+                                left = (screenW - width) / 2;
+                            }
+
+                            mapRef.current.style.width = `${width}px`;
+                            mapRef.current.style.height = `${height}px`;
+                            mapRef.current.style.position = 'absolute';
+                            mapRef.current.style.left = `${left}px`;
+                            mapRef.current.style.top = `${top}px`;
+                        };
+
+                        updateDimensions();
+                        window.addEventListener('resize', updateDimensions);
+                    }}
                 />
 
                 {/* Render Vehicles */}
