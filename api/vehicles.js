@@ -26,11 +26,8 @@ module.exports = async function handler(req, res) {
 
     try {
         // Fetch the raw Protobuf data from the transit agency
-        // node-fetch v2 uses 'timeout' option instead of AbortController
-        const response = await fetch(GTFS_RT_URL, {
-            headers: { 'Accept': 'application/x-protobuf' },
-            timeout: 10000,
-        });
+        // No custom headers - transit agency rejects Accept: application/x-protobuf (406)
+        const response = await fetch(GTFS_RT_URL, { timeout: 10000 });
 
         if (!response.ok) {
             throw new Error('GTFS-RT fetch failed: ' + response.status);
@@ -39,9 +36,8 @@ module.exports = async function handler(req, res) {
         const buffer = await response.buffer();
 
         // Decode Protobuf on the SERVER (not the TV!)
-        const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-            new Uint8Array(buffer)
-        );
+        // Pass buffer directly like working reference
+        const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(buffer);
 
         const vehicles = [];
         const entities = feed.entity || [];
