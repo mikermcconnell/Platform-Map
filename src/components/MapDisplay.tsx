@@ -145,9 +145,6 @@ const MapDisplay: React.FC = () => {
             <div
                 ref={mapRef}
                 className="map-container"
-                onClick={(e) => {
-                    // Handler removed for production
-                }}
                 style={{}}
             >
                 <img
