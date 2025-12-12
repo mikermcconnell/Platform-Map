@@ -3,6 +3,7 @@
  * Fetches GTFS Realtime Protobuf, decodes server-side, returns JSON
  */
 
+const fetch = require('node-fetch');
 const GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 
 const GTFS_RT_URL = 'https://www.myridebarrie.ca/gtfs/GTFS_VehiclePositions.pb';
@@ -25,21 +26,17 @@ module.exports = async function handler(req, res) {
 
     try {
         // Fetch the raw Protobuf data from the transit agency
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
+        // node-fetch v2 uses 'timeout' option instead of AbortController
         const response = await fetch(GTFS_RT_URL, {
             headers: { 'Accept': 'application/x-protobuf' },
-            signal: controller.signal,
+            timeout: 10000,
         });
-
-        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error('GTFS-RT fetch failed: ' + response.status);
         }
 
-        const buffer = await response.arrayBuffer();
+        const buffer = await response.buffer();
 
         // Decode Protobuf on the SERVER (not the TV!)
         const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
