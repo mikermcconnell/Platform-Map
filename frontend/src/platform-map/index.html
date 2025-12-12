@@ -7,22 +7,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="%APP_CSS%">
     <meta name="app-build-id" content="%BUILD_ID%">
+    <style>
+        /* Inline critical debug styles in case CSS fails */
+        #early-debug {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: black;
+            color: lime;
+            font-family: monospace;
+            font-size: 18px;
+            padding: 10px;
+            z-index: 99999;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 
-<body>
+<body style="background: #333; margin: 0;">
+    <!-- Early debug panel - shows even if main JS crashes -->
+    <div id="early-debug">BOOT: HTML loaded</div>
+
+    <script>
+        // PHASE 1: Earliest possible debug logging (inline, no external deps)
+        (function () {
+            var d = document.getElementById('early-debug');
+            function log(msg) {
+                if (d) d.innerHTML += '\n' + msg;
+                try { console.log('[BOOT] ' + msg); } catch (e) { }
+            }
+            window.earlyLog = log;
+
+            // Log browser info
+            log('UA: ' + navigator.userAgent.substring(0, 60));
+            log('Size: ' + window.innerWidth + 'x' + window.innerHeight);
+
+            // Global error handler
+            window.onerror = function (msg, url, line, col, err) {
+                log('ERROR: ' + msg);
+                log('  at ' + url + ':' + line + ':' + col);
+                return false;
+            };
+
+            log('Error handler set');
+        })();
+    </script>
+
     <div class="map-container">
         <img src="./assets/map.png" alt="Platform Map" class="map-image" id="map-image">
         <div id="bus-layer"></div>
     </div>
     <div id="debug-console" class="debug-console"></div>
+
     <script>
         (function () {
-            // Inline console hook for early debugging
-            var consoleDiv = document.getElementById('debug-console');
-            if (consoleDiv) consoleDiv.innerHTML += '<div>LG TV Platform Map v1.0</div>';
+            window.earlyLog('PHASE 2: Before main.js');
         })();
     </script>
+
     <script src="%APP_JS%"></script>
+
+    <script>
+        (function () {
+            window.earlyLog('PHASE 3: After main.js loaded');
+        })();
+    </script>
 </body>
 
 </html>
