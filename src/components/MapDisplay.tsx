@@ -151,7 +151,7 @@ const MapDisplay: React.FC = () => {
                 className="map-container"
             >
                 <img
-                    src="/assets/map.png"
+                    src="/assets/map.jpg"
                     alt="Platform Map"
                     className="map-image"
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
