@@ -1,10 +1,5 @@
 {
     "buildCommand": "npm run build:frontend",
-    "functions": {
-        "api/*.ts": {
-            "runtime": "@vercel/node@3"
-        }
-    },
     "rewrites": [
         {
             "source": "/platform.map",
