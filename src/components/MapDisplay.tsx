@@ -105,6 +105,7 @@ const solveAffine = (points: CalibrationPoint[]) => {
 const MapDisplay: React.FC = () => {
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
+    const [lastClick, setLastClick] = useState<{ x: number, y: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -142,110 +143,133 @@ const MapDisplay: React.FC = () => {
 
     return (
         <div className="map-container">
-            <div
-                ref={mapRef}
-                className="map-container"
-                style={{}}
+            onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                setLastClick({ x, y });
+            }}
+            style={{ cursor: 'crosshair' }}
             >
-                <img
-                    src="/assets/map.jpg"
-                    alt="Platform Map"
-                    className="map-image"
-                    onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
-                    onLoad={(e) => {
-                        const img = e.currentTarget;
-                        const updateDimensions = () => {
-                            if (!mapRef.current) return;
-                            const screenW = window.innerWidth;
-                            const screenH = window.innerHeight;
-                            const screenRatio = screenW / screenH;
-                            const imgRatio = img.naturalWidth / img.naturalHeight;
+            <img
+                src="/assets/map.jpg"
+                alt="Platform Map"
+                className="map-image"
+                onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
+                onLoad={(e) => {
+                    const img = e.currentTarget;
+                    const updateDimensions = () => {
+                        if (!mapRef.current) return;
+                        const screenW = window.innerWidth;
+                        const screenH = window.innerHeight;
+                        const screenRatio = screenW / screenH;
+                        const imgRatio = img.naturalWidth / img.naturalHeight;
 
-                            let width, height, top, left;
+                        let width, height, top, left;
 
-                            if (imgRatio > screenRatio) {
-                                // Image is wider than screen (fit width)
-                                width = screenW;
-                                height = screenW / imgRatio;
-                                left = 0;
-                                top = (screenH - height) / 2;
-                            } else {
-                                // Image is taller than screen (fit height)
-                                height = screenH;
-                                width = screenH * imgRatio;
-                                top = 0;
-                                left = (screenW - width) / 2;
-                            }
-
-                            mapRef.current.style.width = `${width}px`;
-                            mapRef.current.style.height = `${height}px`;
-                            mapRef.current.style.position = 'absolute';
-                            mapRef.current.style.left = `${left}px`;
-                            mapRef.current.style.top = `${top}px`;
-                        };
-
-                        updateDimensions();
-                        window.addEventListener('resize', updateDimensions);
-                    }}
-                />
-
-                {/* Render Vehicles */}
-                {vehicles.map(v => {
-                    const pos = getPixelPosition(v.lat, v.lon);
-                    const routeColor = (v.routeId && ROUTE_COLORS[v.routeId]) ? ROUTE_COLORS[v.routeId] : DEFAULT_COLOR;
-
-                    // Determine Direction for Route 8 (8A/8B)
-                    let displayRouteId = v.routeId || '';
-                    if ((v.routeId === '8A' || v.routeId === '8B')) {
-                        // Priority: Use GTFS direction_id if available (Stable)
-                        if (v.directionId !== undefined) {
-                            // Usually 0 = Outbound (North?), 1 = Inbound (South?)
-                            // We will try this mapping. If swapped, user can correct.
-                            displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
+                        if (imgRatio > screenRatio) {
+                            // Image is wider than screen (fit width)
+                            width = screenW;
+                            height = screenW / imgRatio;
+                            left = 0;
+                            top = (screenH - height) / 2;
+                        } else {
+                            // Image is taller than screen (fit height)
+                            height = screenH;
+                            width = screenH * imgRatio;
+                            top = 0;
+                            left = (screenW - width) / 2;
                         }
-                        // Fallback: Use Bearing (Instantaneous)
-                        else if (v.bearing !== undefined) {
-                            if (v.bearing > 270 || v.bearing <= 90) {
-                                displayRouteId += ' NB';
-                            } else {
-                                displayRouteId += ' SB';
-                            }
+
+                        mapRef.current.style.width = `${width}px`;
+                        mapRef.current.style.height = `${height}px`;
+                        mapRef.current.style.position = 'absolute';
+                        mapRef.current.style.left = `${left}px`;
+                        mapRef.current.style.top = `${top}px`;
+                    };
+
+                    updateDimensions();
+                    window.addEventListener('resize', updateDimensions);
+                }}
+            />
+
+            {/* Render Vehicles */}
+            {vehicles.map(v => {
+                const pos = getPixelPosition(v.lat, v.lon);
+                const routeColor = (v.routeId && ROUTE_COLORS[v.routeId]) ? ROUTE_COLORS[v.routeId] : DEFAULT_COLOR;
+
+                // Determine Direction for Route 8 (8A/8B)
+                let displayRouteId = v.routeId || '';
+                if ((v.routeId === '8A' || v.routeId === '8B')) {
+                    // Priority: Use GTFS direction_id if available (Stable)
+                    if (v.directionId !== undefined) {
+                        // Usually 0 = Outbound (North?), 1 = Inbound (South?)
+                        // We will try this mapping. If swapped, user can correct.
+                        displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
+                    }
+                    // Fallback: Use Bearing (Instantaneous)
+                    else if (v.bearing !== undefined) {
+                        if (v.bearing > 270 || v.bearing <= 90) {
+                            displayRouteId += ' NB';
+                        } else {
+                            displayRouteId += ' SB';
                         }
                     }
+                }
 
-                    return (
+                return (
+                    <div
+                        key={v.id}
+                        className="bus-marker"
+                        style={{ left: pos.left, top: pos.top }}
+                        title={`Bus ${v.id}`}
+                    >
                         <div
-                            key={v.id}
-                            className="bus-marker"
-                            style={{ left: pos.left, top: pos.top }}
-                            title={`Bus ${v.id}`}
+                            className="bus-icon-wrapper"
+                            style={{ borderColor: routeColor }}
                         >
-                            <div
-                                className="bus-icon-wrapper"
-                                style={{ borderColor: routeColor }}
-                            >
-                                <img
-                                    src="/assets/bus_icon.jpg"
-                                    alt="Bus"
-                                    className="bus-icon-image"
-                                />
-                            </div>
-                            {/* Large Floating Route Label for TV Visibility */}
-                            {v.routeId && (
-                                <div
-                                    className="bus-label"
-                                    style={{ backgroundColor: routeColor }}
-                                >
-                                    {displayRouteId}
-                                </div>
-                            )}
+                            <img
+                                src="/assets/bus_icon.jpg"
+                                alt="Bus"
+                                className="bus-icon-image"
+                            />
                         </div>
-                    );
-                })}
+                        {/* Large Floating Route Label for TV Visibility */}
+                        {v.routeId && (
+                            <div
+                                className="bus-label"
+                                style={{ backgroundColor: routeColor }}
+                            >
+                                {displayRouteId}
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
 
-                {/* Calibration Overlay - Removed */}
-            </div>
+            {/* Calibration Overlay */}
+            {lastClick && (
+                <div style={{
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    color: 'white',
+                    padding: '15px',
+                    borderRadius: '8px',
+                    zIndex: 9999,
+                    fontFamily: 'monospace',
+                    pointerEvents: 'none'
+                }}>
+                    <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #666' }}>Calibration Data</h4>
+                    <div style={{ fontSize: '1.2em' }}>
+                        <div>X: <span style={{ color: '#4ade80' }}>{lastClick.x.toFixed(4)}</span>%</div>
+                        <div>Y: <span style={{ color: '#60a5fa' }}>{lastClick.y.toFixed(4)}</span>%</div>
+                    </div>
+                </div>
+            )}
         </div>
+        </div >
     );
 };
 
