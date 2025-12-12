@@ -12,11 +12,10 @@ interface CalibrationPoint {
 
 // Final Calibration Data (Affine Transformation)
 const CALIBRATION_DATA: CalibrationPoint[] = [
-    { "lat": 44.373837, "lon": -79.689279, "x": 54.18848167539267, "y": 55.32381997804611 }, // Platform 3
-    { "lat": 44.374232, "lon": -79.689392, "x": 47.748691099476446, "y": 37.43139407244786 }, // Platform 7
-    { "lat": 44.374245, "lon": -79.689674, "x": 43.97905759162304, "y": 38.090010976948406 }, // Platform 6
-    { "lat": 44.374171, "lon": -79.690445, "x": 33.089005235602095, "y": 43.02963776070253 }, // Platform 12
-    { "lat": 44.373515, "lon": -79.691137, "x": 23.24607329842932, "y": 82.87596048298573 }  // Platform 14
+    { "lat": 44.373667, "lon": -79.687722, "x": 81.86, "y": 60.24 },   // Pick-up/Drop-off
+    { "lat": 44.373833, "lon": -79.689139, "x": 57.13, "y": 59.06 },   // Platform 2
+    { "lat": 44.374250, "lon": -79.689750, "x": 42.11, "y": 45.225 },  // Platform 6
+    { "lat": 44.373528, "lon": -79.691139, "x": 17.34, "y": 74.53 }    // Platform 14
 ];
 
 // Route Colors
@@ -106,7 +105,6 @@ const solveAffine = (points: CalibrationPoint[]) => {
 const MapDisplay: React.FC = () => {
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
-    const [lastClick, setLastClick] = useState<{ x: number, y: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -148,12 +146,9 @@ const MapDisplay: React.FC = () => {
                 ref={mapRef}
                 className="map-container"
                 onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = ((e.clientX - rect.left) / rect.width) * 100;
-                    const y = ((e.clientY - rect.top) / rect.height) * 100;
-                    setLastClick({ x, y });
+                    // Handler removed for production
                 }}
-                style={{ cursor: 'crosshair' }}
+                style={{}}
             >
                 <img
                     src="/assets/map.jpg"
@@ -251,27 +246,7 @@ const MapDisplay: React.FC = () => {
                     );
                 })}
 
-                {/* Calibration Overlay */}
-                {lastClick && (
-                    <div style={{
-                        position: 'fixed',
-                        top: '20px',
-                        right: '20px',
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        color: 'white',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        zIndex: 9999,
-                        fontFamily: 'monospace',
-                        pointerEvents: 'none'
-                    }}>
-                        <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #666' }}>Calibration Data</h4>
-                        <div style={{ fontSize: '1.2em' }}>
-                            <div>X: <span style={{ color: '#4ade80' }}>{lastClick.x.toFixed(4)}</span>%</div>
-                            <div>Y: <span style={{ color: '#60a5fa' }}>{lastClick.y.toFixed(4)}</span>%</div>
-                        </div>
-                    </div>
-                )}
+                {/* Calibration Overlay - Removed */}
             </div>
         </div>
     );

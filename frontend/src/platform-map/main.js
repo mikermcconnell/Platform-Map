@@ -18,32 +18,29 @@
     // =====================================================
     // Status Display (for debugging on TV)
     // =====================================================
-    var statusBox = document.createElement('div');
-    statusBox.className = 'status-box';
-    statusBox.innerHTML = 'Initializing...';
-    document.body.appendChild(statusBox);
-
+    // Status Box removed for production
     function setStatus(msg, color) {
-        statusBox.innerHTML = msg;
-        statusBox.style.color = color || 'white';
+        // no-op
     }
 
     function log(msg) {
-        // Use the early debug panel from HTML for visibility
-        try { window.earlyLog('[APP] ' + msg); } catch (e) { }
-        try { console.log('[PlatformMap] ' + msg); } catch (e) { }
-        var debugConsole = document.getElementById('debug-console');
-        if (debugConsole) {
-            var line = document.createElement('div');
-            line.textContent = new Date().toLocaleTimeString() + ' - ' + msg;
-            debugConsole.appendChild(line);
-            // Keep only last 20 lines
-            while (debugConsole.childNodes.length > 20) {
-                debugConsole.removeChild(debugConsole.firstChild);
-            }
-            debugConsole.scrollTop = debugConsole.scrollHeight;
-        }
+        // Muted for production
+        // try { window.earlyLog('[APP] ' + msg); } catch (e) { }
+        // try { console.log('[PlatformMap] ' + msg); } catch (e) { }
     }
+
+    // Temporary Calibration Click Handler
+    document.addEventListener('click', function (e) {
+        var mapImage = document.getElementById('map-image');
+        if (e.target === mapImage) {
+            var rect = mapImage.getBoundingClientRect();
+            var x = ((e.clientX - rect.left) / rect.width) * 100;
+            var y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            // Show simple alert for the user to copy
+            alert('Calibration Point:\nX: ' + x.toFixed(4) + '\nY: ' + y.toFixed(4));
+        }
+    });
 
     // =====================================================
     // Route Colors (matching original React app)
@@ -64,12 +61,14 @@
     // =====================================================
     // Calibration Data (GPS to Screen %)
     // =====================================================
+    // =====================================================
+    // Calibration Data (GPS to Screen %)
+    // =====================================================
     var CALIBRATION_DATA = [
-        { lat: 44.373837, lon: -79.689279, x: 54.18848167539267, y: 55.32381997804611 },  // Platform 3
-        { lat: 44.374232, lon: -79.689392, x: 47.748691099476446, y: 37.43139407244786 }, // Platform 7
-        { lat: 44.374245, lon: -79.689674, x: 43.97905759162304, y: 38.090010976948406 }, // Platform 6
-        { lat: 44.374171, lon: -79.690445, x: 33.089005235602095, y: 43.02963776070253 }, // Platform 12
-        { lat: 44.373515, lon: -79.691137, x: 23.24607329842932, y: 82.87596048298573 }   // Platform 14
+        { lat: 44.373667, lon: -79.687722, x: 81.86, y: 60.24 },   // Pick-up/Drop-off
+        { lat: 44.373833, lon: -79.689139, x: 57.13, y: 59.06 },   // Platform 2
+        { lat: 44.374250, lon: -79.689750, x: 42.11, y: 45.225 },  // Platform 6
+        { lat: 44.373528, lon: -79.691139, x: 17.34, y: 74.53 }    // Platform 14
     ];
 
     // =====================================================
