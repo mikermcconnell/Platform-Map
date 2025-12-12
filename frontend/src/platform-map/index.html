@@ -27,15 +27,15 @@
 
 <body style="background: #333; margin: 0;">
     <!-- Early debug panel - shows even if main JS crashes -->
-    <div id="early-debug">BOOT: HTML loaded</div>
+    <div id="early-debug" style="display:none;">BOOT: HTML loaded</div>
 
     <script>
         // PHASE 1: Earliest possible debug logging (inline, no external deps)
         (function () {
             var d = document.getElementById('early-debug');
             function log(msg) {
-                if (d) d.innerHTML += '\n' + msg;
-                try { console.log('[BOOT] ' + msg); } catch (e) { }
+                // if (d) d.innerHTML += '\n' + msg;
+                // try { console.log('[BOOT] ' + msg); } catch (e) { }
             }
             window.earlyLog = log;
 
@@ -55,10 +55,10 @@
     </script>
 
     <div class="map-container">
-        <img src="./assets/map.png" alt="Platform Map" class="map-image" id="map-image">
+        <img src="./assets/map.jpg" alt="Platform Map" class="map-image" id="map-image">
         <div id="bus-layer"></div>
     </div>
-    <div id="debug-console" class="debug-console"></div>
+    <!-- div id="debug-console" class="debug-console"></div -->
 
     <script>
         (function () {
