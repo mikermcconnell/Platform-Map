@@ -29,7 +29,11 @@
     }
 
     function log(msg) {
-        console.log('[PlatformMap] ' + msg);
+        // Use the early debug panel from HTML for visibility
+        if (typeof window.earlyLog === 'function') {
+            window.earlyLog('[APP] ' + msg);
+        }
+        try { console.log('[PlatformMap] ' + msg); } catch (e) { }
         var debugConsole = document.getElementById('debug-console');
         if (debugConsole) {
             var line = document.createElement('div');
