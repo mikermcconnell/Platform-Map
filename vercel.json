@@ -1,21 +1,15 @@
 {
     "buildCommand": "npm run build:frontend",
+    "outputDirectory": "frontend/dist",
+    "framework": null,
     "rewrites": [
         {
             "source": "/platform.map",
-            "destination": "/frontend/dist/platform.map.html"
-        },
-        {
-            "source": "/assets/(.*)",
-            "destination": "/frontend/dist/assets/$1"
+            "destination": "/platform.map.html"
         },
         {
             "source": "/api/vehicles",
-            "destination": "/api/vehicles"
-        },
-        {
-            "source": "/api/(.*)",
-            "destination": "/api/$1"
+            "destination": "/api/vehicles.js"
         }
     ],
     "headers": [
