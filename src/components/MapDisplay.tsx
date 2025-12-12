@@ -104,18 +104,16 @@ const solveAffine = (points: CalibrationPoint[]) => {
 };
 
 const MapDisplay: React.FC = () => {
-    console.log("MapDisplay: Render Cycle Started");
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
+    const [lastClick, setLastClick] = useState<{ x: number, y: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        console.log(`MapDisplay Mounted. Viewport: ${window.innerWidth}x${window.innerHeight}`);
         // Calculate Affine Matrix from hardcoded data
         const matrix = solveAffine(CALIBRATION_DATA);
         if (matrix) {
             setAffineMatrix(matrix);
-            console.log('Affine Matrix Applied:', matrix);
         }
 
         // Initial fetch
@@ -138,7 +136,7 @@ const MapDisplay: React.FC = () => {
 
         // Debug Log (Sample occasionally or if off-screen)
         if (x < 0 || x > 100 || y < 0 || y > 100) {
-            console.warn(`Bus off-screen: Lat ${lat}, Lon ${lon} -> X ${x}, Y ${y}`);
+            // Bus off-screen
         }
 
         return { left: `${x}%`, top: `${y}%` };
@@ -149,6 +147,13 @@ const MapDisplay: React.FC = () => {
             <div
                 ref={mapRef}
                 className="map-container"
+                onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    setLastClick({ x, y });
+                }}
+                style={{ cursor: 'crosshair' }}
             >
                 <img
                     src="/assets/map.jpg"
@@ -156,7 +161,6 @@ const MapDisplay: React.FC = () => {
                     className="map-image"
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
                     onLoad={(e) => {
-                        console.log("Map image loaded successfully");
                         const img = e.currentTarget;
                         const updateDimensions = () => {
                             if (!mapRef.current) return;
@@ -246,6 +250,28 @@ const MapDisplay: React.FC = () => {
                         </div>
                     );
                 })}
+
+                {/* Calibration Overlay */}
+                {lastClick && (
+                    <div style={{
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '8px',
+                        zIndex: 9999,
+                        fontFamily: 'monospace',
+                        pointerEvents: 'none'
+                    }}>
+                        <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #666' }}>Calibration Data</h4>
+                        <div style={{ fontSize: '1.2em' }}>
+                            <div>X: <span style={{ color: '#4ade80' }}>{lastClick.x.toFixed(4)}</span>%</div>
+                            <div>Y: <span style={{ color: '#60a5fa' }}>{lastClick.y.toFixed(4)}</span>%</div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
