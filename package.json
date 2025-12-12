@@ -1,36 +1,28 @@
 {
   "name": "platform-map-tv",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "type": "commonjs",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "build": "npm run build:frontend",
+    "build:frontend": "node scripts/build-frontend.js",
+    "dev": "npm run build:frontend && npx serve frontend/dist -l 3000",
+    "dev:react": "vite",
+    "build:react": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "core-js": "^3.47.0",
-    "cors": "^2.8.5",
-    "gtfs-realtime-bindings": "^1.1.1",
-    "lucide-react": "^0.292.0",
-    "protobufjs": "^7.2.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "gtfs-realtime-bindings": "^1.1.1"
   },
   "devDependencies": {
-    "@types/pbf": "^3.0.5",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "@types/node": "^20.10.0",
     "@vercel/node": "^5.5.14",
-    "@vitejs/plugin-legacy": "^4.1.1",
-    "@vitejs/plugin-react": "^4.0.3",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
-    "terser": "^5.44.1",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "esbuild": "^0.24.0",
+    "typescript": "^5.0.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
