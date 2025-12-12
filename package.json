@@ -13,15 +13,23 @@
   },
   "dependencies": {
     "gtfs-realtime-bindings": "^1.1.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",
     "@babel/preset-env": "^7.25.0",
     "@types/node": "^20.10.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@vercel/node": "^5.5.14",
+    "@vitejs/plugin-legacy": "^7.2.1",
+    "@vitejs/plugin-react": "^5.1.2",
     "esbuild": "^0.24.0",
-    "typescript": "^5.0.2"
+    "terser": "^5.44.1",
+    "typescript": "^5.0.2",
+    "vite": "^7.2.7"
   },
   "engines": {
     "node": ">=18"

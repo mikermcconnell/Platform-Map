@@ -7,7 +7,7 @@ function App() {
     console.log("App: Render Cycle Started");
     return (
         <ErrorBoundary>
-            <div className="w-full h-screen bg-black relative">
+            <div className="map-container">
                 <MapDisplay />
                 <DebugConsole />
             </div>

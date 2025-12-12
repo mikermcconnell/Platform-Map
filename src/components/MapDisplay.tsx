@@ -145,15 +145,15 @@ const MapDisplay: React.FC = () => {
     };
 
     return (
-        <div className="relative w-full h-full bg-gray-900 overflow-hidden">
+        <div className="map-container">
             <div
                 ref={mapRef}
-                className="relative w-full h-full"
+                className="map-container"
             >
                 <img
                     src="/assets/map.png"
                     alt="Platform Map"
-                    className="w-full h-full object-contain"
+                    className="map-image"
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
                     onLoad={() => console.log("Map image loaded successfully")}
                 />
@@ -185,24 +185,24 @@ const MapDisplay: React.FC = () => {
                     return (
                         <div
                             key={v.id}
-                            className="absolute w-20 h-20 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-linear z-10"
+                            className="bus-marker"
                             style={{ left: pos.left, top: pos.top }}
                             title={`Bus ${v.id}`}
                         >
                             <div
-                                className="relative w-full h-full group rounded-full overflow-hidden shadow-lg bg-white border-4"
+                                className="bus-icon-wrapper"
                                 style={{ borderColor: routeColor }}
                             >
                                 <img
                                     src="/assets/bus_icon.jpg"
                                     alt="Bus"
-                                    className="w-full h-full object-cover"
+                                    className="bus-icon-image"
                                 />
                             </div>
                             {/* Large Floating Route Label for TV Visibility */}
                             {v.routeId && (
                                 <div
-                                    className="absolute -top-10 left-1/2 transform -translate-x-1/2 text-white text-xl font-bold px-3 py-1 rounded-lg shadow-md border-2 border-white z-20 whitespace-nowrap"
+                                    className="bus-label"
                                     style={{ backgroundColor: routeColor }}
                                 >
                                     {displayRouteId}

@@ -11,22 +11,22 @@ const DebugConsole: React.FC = () => {
         return subscribeLogs(setLogs);
     }, []);
 
-    if (!isVisible) return <button onClick={() => setIsVisible(true)} className="fixed bottom-0 right-0 bg-red-500 text-white p-2 z-50">Show Debug</button>;
+    if (!isVisible) return <button onClick={() => setIsVisible(true)} className="show-debug-btn">Show Debug</button>;
 
     return (
-        <div className="fixed bottom-0 left-0 w-full h-1/3 bg-black bg-opacity-80 text-green-400 font-mono text-xs overflow-y-auto z-50 p-2 border-t border-green-500 pointer-events-none">
-            <div className="flex justify-between items-center sticky top-0 bg-black bg-opacity-90 p-1 border-b border-green-700 pointer-events-auto">
-                <span>Debug Console</span>
-                <div className="space-x-2">
-                    <button onClick={() => console.log('Test Log Works')} className="bg-blue-700 px-2 py-1 rounded">Test Log</button>
-                    <button onClick={() => { throw new Error('Test Error') }} className="bg-red-700 px-2 py-1 rounded">Test Error</button>
-                    <button onClick={() => setIsVisible(false)} className="bg-gray-700 px-2 py-1 rounded">Hide</button>
+        <div className="debug-console">
+            <div className="debug-header">
+                <span className="debug-title">Debug Console</span>
+                <div className="debug-controls">
+                    <button onClick={() => console.log('Test Log Works')} className="debug-btn btn-blue">Test Log</button>
+                    <button onClick={() => { throw new Error('Test Error') }} className="debug-btn btn-red">Test Error</button>
+                    <button onClick={() => setIsVisible(false)} className="debug-btn btn-gray">Hide</button>
                 </div>
             </div>
-            <div className="mt-2">
+            <div style={{ marginTop: '8px' }}>
                 {logs.map((log, i) => (
-                    <div key={i} className="border-b border-gray-800 py-0.5 break-words">
-                        <span className="text-gray-500">[{log.timestamp}]</span> <span className={`font-bold ${log.type === 'ERROR' ? 'text-red-500' : log.type === 'WARN' ? 'text-yellow-500' : 'text-green-400'}`}>{log.type}</span>: {log.message}
+                    <div key={i} className="log-entry">
+                        <span className="text-gray">[{log.timestamp}]</span> <span className={`font-bold ${log.type === 'ERROR' ? 'text-red' : log.type === 'WARN' ? 'text-yellow' : 'text-green'}`}>{log.type}</span>: {log.message}
                     </div>
                 ))}
             </div>
