@@ -7,10 +7,12 @@ export interface LogEntry {
     timestamp: string;
 }
 
+const MAX_LOG_ENTRIES = 100;
+
 const logs: LogEntry[] = [];
 const listeners: ((logs: LogEntry[]) => void)[] = [];
 
-const addLog = (type: string, args: any[]) => {
+const addLog = (type: string, args: unknown[]) => {
     const message = args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
     ).join(' ');
@@ -22,7 +24,7 @@ const addLog = (type: string, args: any[]) => {
     };
 
     logs.unshift(entry);
-    if (logs.length > 100) logs.pop();
+    if (logs.length > MAX_LOG_ENTRIES) logs.pop();
 
     listeners.forEach(l => l([...logs]));
 };

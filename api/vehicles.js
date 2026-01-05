@@ -8,10 +8,20 @@ const GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 
 const GTFS_RT_URL = 'https://www.myridebarrie.ca/gtfs/GTFS_VehiclePositions.pb';
 
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+    'https://platform-map.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'
+];
+
 module.exports = async function handler(req, res) {
-    // Set CORS headers
+    // Set CORS headers with origin validation
+    const origin = req.headers.origin;
+    if (ALLOWED_ORIGINS.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Cache-Control', 'public, max-age=5');
@@ -77,7 +87,7 @@ module.exports = async function handler(req, res) {
         res.status(502).json({
             generated_at: Date.now(),
             vehicles: [],
-            error: errorMessage,
+            error: 'Failed to fetch vehicle data',
         });
     }
 };

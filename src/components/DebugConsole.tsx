@@ -19,7 +19,6 @@ const DebugConsole: React.FC = () => {
                 <span className="debug-title">Debug Console</span>
                 <div className="debug-controls">
                     <button onClick={() => console.log('Test Log Works')} className="debug-btn btn-blue">Test Log</button>
-                    <button onClick={() => { throw new Error('Test Error') }} className="debug-btn btn-red">Test Error</button>
                     <button onClick={() => setIsVisible(false)} className="debug-btn btn-gray">Hide</button>
                 </div>
             </div>

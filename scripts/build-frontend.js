@@ -48,8 +48,8 @@ function contentHash(buffer) {
 }
 
 function copyAssets() {
-    // Copy map.jpg and bus_icon.jpg from public/assets to dist/assets
-    const assetsToCopy = ['map.jpg', 'bus_icon.jpg'];
+    // Copy map.jpg and Bus_Icon.jpeg from public/assets to dist/assets
+    const assetsToCopy = ['map.jpg', 'Bus_Icon.jpeg'];
 
     for (const asset of assetsToCopy) {
         const srcPath = path.join(publicAssetsDir, asset);

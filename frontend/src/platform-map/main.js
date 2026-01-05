@@ -25,25 +25,7 @@
 
     function log(msg) {
         // Muted for production
-        // try { window.earlyLog('[APP] ' + msg); } catch (e) { }
-        // try { console.log('[PlatformMap] ' + msg); } catch (e) { }
     }
-
-    // Temporary Calibration Click Handler
-    // Temporary Calibration Click Handler (Removed for Production)
-    /*
-    document.addEventListener('click', function (e) {
-        var mapImage = document.getElementById('map-image');
-        if (e.target === mapImage) {
-            var rect = mapImage.getBoundingClientRect();
-            var x = ((e.clientX - rect.left) / rect.width) * 100;
-            var y = ((e.clientY - rect.top) / rect.height) * 100;
-
-            // Show simple alert for the user to copy
-            alert('Calibration Point:\nX: ' + x.toFixed(4) + '\nY: ' + y.toFixed(4));
-        }
-    });
-    */
 
     // =====================================================
     // Route Colors (matching original React app)
@@ -61,9 +43,6 @@
     };
     var DEFAULT_COLOR = '#0055A4';
 
-    // =====================================================
-    // Calibration Data (GPS to Screen %)
-    // =====================================================
     // =====================================================
     // Calibration Data (GPS to Screen %)
     // =====================================================
@@ -193,7 +172,7 @@
 
             // Build inner HTML
             var html = '<div class="bus-icon-wrapper" style="border-color: ' + color + ';">';
-            html += '<img src="./assets/bus_icon.jpg" class="bus-icon-image" alt="Bus">';
+            html += '<img src="./assets/Bus_Icon.jpeg" class="bus-icon-image" alt="Bus">';
             html += '</div>';
 
             if (routeId) {
@@ -274,8 +253,8 @@
         // Start fetching data
         try {
             doFetch();
-            setInterval(doFetch, 10000); // Poll every 10 seconds
-            log('Polling started (10s interval)');
+            setInterval(doFetch, 15000); // Poll every 15 seconds
+            log('Polling started (15s interval)');
         } catch (e) {
             log('FATAL: ' + e.message);
             setStatus('Init error: ' + e.message, 'red');

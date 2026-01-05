@@ -1,5 +1,3 @@
-
-
 export interface VehiclePosition {
     id: string;
     lat: number;
@@ -9,28 +7,46 @@ export interface VehiclePosition {
     bearing?: number;
 }
 
+// API response type for type safety
+interface VehicleAPIResponse {
+    id: string;
+    lat: number;
+    lon: number;
+    route_id?: string;
+    direction_id?: number;
+    bearing?: number;
+}
+
+interface VehiclesAPIResponse {
+    generated_at: number;
+    vehicles: VehicleAPIResponse[];
+    error?: string;
+}
+
+export interface FetchResult {
+    vehicles: VehiclePosition[];
+    error: string | null;
+}
+
 export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
     try {
-        // Use the Serverless Function which decodes Protobuf server-side and returns JSON
         const response = await fetch('/api/vehicles');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: VehiclesAPIResponse = await response.json();
         const vehicles: VehiclePosition[] = [];
 
         if (data.vehicles && Array.isArray(data.vehicles)) {
-            data.vehicles.forEach((v: any) => {
-                // Determine Direction for Route 8 (8A/8B)
-                // The API returns direction_id, bearing, lat, lon
+            data.vehicles.forEach((v: VehicleAPIResponse) => {
                 vehicles.push({
                     id: v.id,
                     lat: v.lat,
                     lon: v.lon,
                     routeId: v.route_id,
                     directionId: v.direction_id,
-                    bearing: v.bearing || 0
+                    bearing: v.bearing ?? 0
                 });
             });
         }

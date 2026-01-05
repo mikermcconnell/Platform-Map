@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 
-// Calibration Data
+// Constants
+const POLL_INTERVAL_MS = 15000;
+
 // Calibration Data
 interface CalibrationPoint {
     lat: number;
@@ -104,8 +106,48 @@ const solveAffine = (points: CalibrationPoint[]) => {
 
 const MapDisplay: React.FC = () => {
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    // Resize handler - extracted for cleanup
+    const updateDimensions = useCallback(() => {
+        if (!mapRef.current || !imgRef.current) return;
+        const img = imgRef.current;
+        if (!img.naturalWidth || !img.naturalHeight) return;
+
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        const screenRatio = screenW / screenH;
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+
+        let width, height, top, left;
+
+        if (imgRatio > screenRatio) {
+            width = screenW;
+            height = screenW / imgRatio;
+            left = 0;
+            top = (screenH - height) / 2;
+        } else {
+            height = screenH;
+            width = screenH * imgRatio;
+            top = 0;
+            left = (screenW - width) / 2;
+        }
+
+        mapRef.current.style.width = `${width}px`;
+        mapRef.current.style.height = `${height}px`;
+        mapRef.current.style.position = 'absolute';
+        mapRef.current.style.left = `${left}px`;
+        mapRef.current.style.top = `${top}px`;
+    }, []);
+
+    // Resize listener with proper cleanup
+    useEffect(() => {
+        window.addEventListener('resize', updateDimensions);
+        return () => window.removeEventListener('resize', updateDimensions);
+    }, [updateDimensions]);
 
     useEffect(() => {
         // Calculate Affine Matrix from hardcoded data
@@ -115,13 +157,17 @@ const MapDisplay: React.FC = () => {
         }
 
         // Initial fetch
-        fetchVehiclePositions().then(setVehicles);
+        setIsLoading(true);
+        fetchVehiclePositions().then((data) => {
+            setVehicles(data);
+            setIsLoading(false);
+        });
 
-        // Poll every 15 seconds
+        // Poll at configured interval
         const interval = setInterval(async () => {
             const data = await fetchVehiclePositions();
             setVehicles(data);
-        }, 15000);
+        }, POLL_INTERVAL_MS);
 
         return () => clearInterval(interval);
     }, []);
@@ -148,46 +194,30 @@ const MapDisplay: React.FC = () => {
                 style={{}}
             >
                 <img
+                    ref={imgRef}
                     src="/assets/map.jpg"
                     alt="Platform Map"
                     className="map-image"
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
-                    onLoad={(e) => {
-                        const img = e.currentTarget;
-                        const updateDimensions = () => {
-                            if (!mapRef.current) return;
-                            const screenW = window.innerWidth;
-                            const screenH = window.innerHeight;
-                            const screenRatio = screenW / screenH;
-                            const imgRatio = img.naturalWidth / img.naturalHeight;
-
-                            let width, height, top, left;
-
-                            if (imgRatio > screenRatio) {
-                                // Image is wider than screen (fit width)
-                                width = screenW;
-                                height = screenW / imgRatio;
-                                left = 0;
-                                top = (screenH - height) / 2;
-                            } else {
-                                // Image is taller than screen (fit height)
-                                height = screenH;
-                                width = screenH * imgRatio;
-                                top = 0;
-                                left = (screenW - width) / 2;
-                            }
-
-                            mapRef.current.style.width = `${width}px`;
-                            mapRef.current.style.height = `${height}px`;
-                            mapRef.current.style.position = 'absolute';
-                            mapRef.current.style.left = `${left}px`;
-                            mapRef.current.style.top = `${top}px`;
-                        };
-
-                        updateDimensions();
-                        window.addEventListener('resize', updateDimensions);
-                    }}
+                    onLoad={updateDimensions}
                 />
+
+                {/* Loading Indicator */}
+                {isLoading && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        color: 'white',
+                        fontSize: '24px',
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        padding: '20px 40px',
+                        borderRadius: '8px'
+                    }}>
+                        Loading buses...
+                    </div>
+                )}
 
                 {/* Render Vehicles */}
                 {vehicles.map(v => {
@@ -225,7 +255,7 @@ const MapDisplay: React.FC = () => {
                                 style={{ borderColor: routeColor }}
                             >
                                 <img
-                                    src="/assets/bus_icon.jpg"
+                                    src="/assets/Bus_Icon.jpeg"
                                     alt="Bus"
                                     className="bus-icon-image"
                                 />

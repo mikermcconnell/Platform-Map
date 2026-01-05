@@ -27,3 +27,10 @@ dist-ssr
 # Typescript
 *.tsbuildinfo
 
+# Vercel
+.vercel
+
+# Environment files
+.env
+.env.*
+!.env.example
