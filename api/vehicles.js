@@ -66,6 +66,8 @@ module.exports = async function handler(req, res) {
                 lon: v.position.longitude,
                 bearing: typeof v.position.bearing === 'number' ? v.position.bearing : null,
                 speed: typeof v.position.speed === 'number' ? v.position.speed : null,
+                current_status: typeof v.currentStatus === 'number' ? v.currentStatus : null,
+                stop_id: v.stopId || null,
                 last_reported: v.timestamp
                     ? Number(v.timestamp.toNumber ? v.timestamp.toNumber() : v.timestamp)
                     : null,
