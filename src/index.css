@@ -41,14 +41,10 @@ body {
 /* Bus Marker Styles */
 .bus-marker {
   position: absolute;
-  width: 80px;
-  /* w-20 */
-  height: 80px;
-  /* h-20 */
-  /* transform: translate(-50%, -50%); - moved to inline style or handled via JS to be safe, but CSS transform usually supported */
+  width: 90px;
+  height: 90px;
   transform: translate(-50%, -50%);
   transition: left 1s linear, top 1s linear;
-  /* transition-all duration-1000 ease-linear */
   z-index: 10;
 }
 
@@ -57,45 +53,22 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  /* rounded-full */
-  overflow: hidden;
-  background-color: white;
   border-width: 4px;
-  /* border-4 */
   border-style: solid;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  /* shadow-lg */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  text-align: center;
 }
 
-.bus-icon-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Route Label */
-.bus-label {
+.bus-route-number {
   position: absolute;
-  top: -40px;
-  /* -top-10 */
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   color: white;
-  font-size: 18px;
-  /* text-xl */
+  font-size: 22px;
   font-weight: bold;
-  /* font-bold */
-  padding: 4px 12px;
-  /* px-3 py-1 */
-  border-radius: 8px;
-  /* rounded-lg */
-  border: 2px solid white;
-  /* border-2 border-white */
   white-space: nowrap;
-  /* whitespace-nowrap */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  /* shadow-md */
-  z-index: 20;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Debug Console */

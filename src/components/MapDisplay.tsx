@@ -252,23 +252,10 @@ const MapDisplay: React.FC = () => {
                         >
                             <div
                                 className="bus-icon-wrapper"
-                                style={{ borderColor: routeColor }}
+                                style={{ backgroundColor: routeColor, borderColor: routeColor }}
                             >
-                                <img
-                                    src="/assets/Bus_Icon.jpeg"
-                                    alt="Bus"
-                                    className="bus-icon-image"
-                                />
+                                <span className="bus-route-number">{displayRouteId}</span>
                             </div>
-                            {/* Large Floating Route Label for TV Visibility */}
-                            {v.routeId && (
-                                <div
-                                    className="bus-label"
-                                    style={{ backgroundColor: routeColor }}
-                                >
-                                    {displayRouteId}
-                                </div>
-                            )}
                         </div>
                     );
                 })}
