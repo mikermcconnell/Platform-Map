@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
-import AlertBanner from './AlertBanner';
 import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS } from '../config/routes';
 
 // Constants
@@ -185,8 +184,6 @@ const MapDisplay: React.FC = () => {
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
                     onLoad={updateDimensions}
                 />
-
-                <AlertBanner />
 
                 {/* Loading Indicator */}
                 {isLoading && (
