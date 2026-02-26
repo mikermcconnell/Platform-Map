@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
+import BusIcon from './BusIcon';
 import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS } from '../config/routes';
 
 // Constants
@@ -90,6 +91,7 @@ const solveAffine = (points: CalibrationPoint[]) => {
 const MapDisplay: React.FC = () => {
     const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [animationReady, setAnimationReady] = useState(false);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
@@ -144,6 +146,10 @@ const MapDisplay: React.FC = () => {
         fetchVehiclePositions().then((data) => {
             setVehicles(data);
             setIsLoading(false);
+            // Enable smooth transitions after initial positions are painted
+            requestAnimationFrame(() => {
+                setAnimationReady(true);
+            });
         });
 
         // Poll at configured interval
@@ -231,18 +237,15 @@ const MapDisplay: React.FC = () => {
                     return (
                         <div
                             key={v.id}
-                            className="bus-marker"
+                            className={`bus-marker${animationReady ? '' : ' no-transition'}`}
                             style={{ left: pos.left, top: pos.top }}
                             title={`Bus ${v.id}`}
                         >
                             {isAtTerminal && (
                                 <span className="at-terminal-label">At Terminal</span>
                             )}
-                            <div
-                                className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}
-                                style={{ backgroundColor: routeColor, borderColor: routeColor }}
-                            >
-                                <span className="bus-route-number">{displayRouteId}</span>
+                            <div className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}>
+                                <BusIcon routeColor={routeColor} routeLabel={displayRouteId} />
                             </div>
                         </div>
                     );
