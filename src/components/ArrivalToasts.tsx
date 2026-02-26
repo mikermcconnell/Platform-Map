@@ -16,7 +16,7 @@ interface Toast {
 }
 
 const TOAST_DURATION_MS = 15000;
-const MAX_TOASTS = 3;
+const MAX_TOASTS = 2;
 
 interface ArrivalToastsProps {
     vehicles: VehiclePosition[];

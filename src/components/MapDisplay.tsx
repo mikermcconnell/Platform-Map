@@ -235,6 +235,9 @@ const MapDisplay: React.FC = () => {
                             style={{ left: pos.left, top: pos.top }}
                             title={`Bus ${v.id}`}
                         >
+                            {isAtTerminal && (
+                                <span className="at-terminal-label">At Terminal</span>
+                            )}
                             <div
                                 className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}
                                 style={{ backgroundColor: routeColor, borderColor: routeColor }}

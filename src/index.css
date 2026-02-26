@@ -41,8 +41,8 @@ body {
 /* Bus Marker Styles */
 .bus-marker {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 50px;
+  height: 50px;
   transform: translate(-50%, -50%);
   transition: left 1s linear, top 1s linear;
   z-index: 10;
@@ -53,9 +53,9 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-width: 4px;
+  border-width: 3px;
   border-style: solid;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   text-align: center;
 }
 
@@ -65,7 +65,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 22px;
+  font-size: 13px;
   font-weight: bold;
   white-space: nowrap;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -76,20 +76,19 @@ body {
 /* Arrival Toast Notifications */
 .arrival-toasts {
   position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 16px;
+  right: 16px;
   z-index: 30;
-  width: 500px;
+  width: 340px;
 }
 
 .arrival-toast {
   color: white;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: bold;
-  padding: 12px 24px;
-  border-radius: 30px;
-  margin-bottom: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-bottom: 6px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   animation: toast-slide-in 0.4s ease-out;
@@ -112,14 +111,30 @@ body {
 
 /* At-terminal glow for bus markers */
 .at-terminal {
-  box-shadow: 0 0 15px 5px currentColor, 0 4px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 12px 4px currentColor;
   animation: terminal-pulse 2s ease-in-out infinite;
-  transform: scale(1.1);
 }
 
 @keyframes terminal-pulse {
-  0%, 100% { box-shadow: 0 0 10px 3px currentColor; }
-  50% { box-shadow: 0 0 20px 8px currentColor; }
+  0%, 100% { box-shadow: 0 0 8px 3px currentColor; }
+  50% { box-shadow: 0 0 16px 6px currentColor; }
+}
+
+/* "At Terminal" label above pulsing markers */
+.at-terminal-label {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
 }
 
 /* Debug Console */
