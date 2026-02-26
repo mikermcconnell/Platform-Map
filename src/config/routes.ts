@@ -18,9 +18,10 @@ export const DEFAULT_COLOR = '#0055A4';
 
 export const ROUTE_ORDER = ['2A','2B','7A','7B','8A','8B','10','11','12A','12B','100','101','400'];
 
-export const TERMINAL_STOP_IDS = ['9003','9004','9005','9006','9012','9013','9014'];
+export const TERMINAL_STOP_IDS = ['14','9003','9004','9005','9006','9012','9013','9014'];
 
 export const TERMINAL_STOP_NAMES: Record<string, string> = {
+    '14': 'Platform 14',
     '9003': 'Platform 3',
     '9004': 'Platform 4',
     '9005': 'Platform 5',
