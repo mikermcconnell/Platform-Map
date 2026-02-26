@@ -76,7 +76,7 @@ body {
 /* Arrival Board — Airport-style info display */
 .arrival-board {
   position: absolute;
-  bottom: 16px;
+  top: 16px;
   right: 16px;
   z-index: 30;
   width: 380px;
