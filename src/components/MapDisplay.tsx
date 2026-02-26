@@ -3,6 +3,7 @@ import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
 import RouteLegend from './RouteLegend';
 import ClockDisplay from './ClockDisplay';
+import AlertBanner from './AlertBanner';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -219,6 +220,7 @@ const MapDisplay: React.FC = () => {
                 />
 
                 <ClockDisplay />
+                <AlertBanner />
 
                 {/* Loading Indicator */}
                 {isLoading && (
