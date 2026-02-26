@@ -41,8 +41,8 @@ body {
 /* Bus Marker Styles */
 .bus-marker {
   position: absolute;
-  width: 80px;
-  height: 52px;
+  width: 55px;
+  height: 55px;
   transform: translate(-50%, -50%);
   transition: left 15s linear, top 15s linear;
   z-index: 10;
