@@ -4,6 +4,7 @@ import ArrivalToasts from './ArrivalToasts';
 import RouteLegend from './RouteLegend';
 import ClockDisplay from './ClockDisplay';
 import AlertBanner from './AlertBanner';
+import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS } from '../config/routes';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -24,25 +25,6 @@ const CALIBRATION_DATA: CalibrationPoint[] = [
     { "lat": 44.373528, "lon": -79.691139, "x": 7.7520, "y": 80.5708 }     // Platform 14
 ];
 
-// Route Colors
-const ROUTE_COLORS: Record<string, string> = {
-    '2A': '#006837', // Green
-    '2B': '#006837',
-    '7A': '#F58220', // Orange
-    '7B': '#F58220',
-    '8A': '#000000', // Black
-    '8B': '#000000',
-    '10': '#662D91', // Purple
-    '11': '#8DC63F', // Lime
-    '12A': '#F49AC1', // Pink
-    '12B': '#F49AC1',
-    '100': '#BE1E2D', // Red
-    '101': '#2E3192', // Blue
-    '400': '#00AEEF', // Cyan
-};
-
-const DEFAULT_COLOR = '#0055A4'; // Default Blue
-
 // Terminal platform positions — GPS coords from GTFS static feed
 const TERMINAL_PLATFORMS: { stopId: string; label: string; lat: number; lon: number }[] = [
     { stopId: '9003', label: 'P3', lat: 44.3738731, lon: -79.6893516 },
@@ -53,8 +35,6 @@ const TERMINAL_PLATFORMS: { stopId: string; label: string; lat: number; lon: num
     { stopId: '9013', label: 'P13', lat: 44.3741352, lon: -79.6904421 },
     { stopId: '9014', label: 'P14', lat: 44.373528, lon: -79.691139 },
 ];
-
-const TERMINAL_STOP_IDS = ['9003', '9004', '9005', '9006', '9012', '9013', '9014'];
 
 // Affine Transformation Solver (Least Squares with Centering)
 const solveAffine = (points: CalibrationPoint[]) => {

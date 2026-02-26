@@ -1,15 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ServiceAlert, fetchServiceAlerts } from '../services/alerts';
-
-const ROUTE_COLORS: Record<string, string> = {
-    '2A': '#006837', '2B': '#006837',
-    '7A': '#F58220', '7B': '#F58220',
-    '8A': '#000000', '8B': '#000000',
-    '10': '#662D91', '11': '#8DC63F',
-    '12A': '#F49AC1', '12B': '#F49AC1',
-    '100': '#BE1E2D', '101': '#2E3192',
-    '400': '#00AEEF',
-};
+import { ROUTE_COLORS } from '../config/routes';
 
 const ALERT_POLL_MS = 60000;
 const ROTATE_MS = 10000;
