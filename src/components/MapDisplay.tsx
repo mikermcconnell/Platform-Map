@@ -245,7 +245,7 @@ const MapDisplay: React.FC = () => {
                                 <span className="at-terminal-label">At Terminal</span>
                             )}
                             <div className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}>
-                                <BusIcon routeColor={routeColor} routeLabel={displayRouteId} />
+                                <BusIcon routeColor={routeColor} />
                             </div>
                         </div>
                     );
