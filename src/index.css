@@ -73,40 +73,80 @@ body {
 
 
 
-/* Arrival Toast Notifications */
-.arrival-toasts {
+/* Arrival Board — Airport-style info display */
+.arrival-board {
   position: absolute;
   bottom: 16px;
   right: 16px;
   z-index: 30;
-  width: 340px;
+  width: 380px;
+  background-color: rgba(10, 10, 15, 0.9);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  animation: board-fade-in 0.3s ease-out;
 }
 
-.arrival-toast {
-  color: white;
-  font-size: 16px;
+.arrival-board-header {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
   font-weight: bold;
-  padding: 8px 16px;
-  border-radius: 20px;
-  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.arrival-board-row {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  animation: row-slide-in 0.4s ease-out;
+}
+
+.arrival-board-route {
+  display: inline-block;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-right: 10px;
+  min-width: 36px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  animation: toast-slide-in 0.4s ease-out;
 }
 
-.toast-separator {
-  opacity: 0.8;
+.arrival-board-platform {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
-@keyframes toast-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.arrival-board-status {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  float: right;
+  margin-top: 2px;
+}
+
+.status-arrived {
+  color: #4ade80;
+}
+
+.status-arriving {
+  color: #fbbf24;
+}
+
+@keyframes board-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes row-slide-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* At-terminal glow for bus markers */

@@ -89,17 +89,19 @@ const ArrivalToasts: React.FC<ArrivalToastsProps> = ({ vehicles }) => {
     if (toasts.length === 0) return null;
 
     return (
-        <div className="arrival-toasts">
+        <div className="arrival-board">
+            <div className="arrival-board-header">Terminal Arrivals</div>
             {toasts.map(toast => (
-                <div
-                    key={toast.id}
-                    className="arrival-toast"
-                    style={{ backgroundColor: toast.color }}
-                >
-                    <span className="toast-route">Route {toast.routeId}</span>
-                    <span className="toast-separator"> — </span>
-                    <span className="toast-status">
-                        {toast.status === 'arrived' ? 'At' : 'Arriving at'} {toast.platformName}
+                <div key={toast.id} className="arrival-board-row">
+                    <span
+                        className="arrival-board-route"
+                        style={{ backgroundColor: toast.color }}
+                    >
+                        {toast.routeId}
+                    </span>
+                    <span className="arrival-board-platform">{toast.platformName}</span>
+                    <span className={`arrival-board-status ${toast.status === 'arrived' ? 'status-arrived' : 'status-arriving'}`}>
+                        {toast.status === 'arrived' ? 'AT PLATFORM' : 'ARRIVING'}
                     </span>
                 </div>
             ))}
