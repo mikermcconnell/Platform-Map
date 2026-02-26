@@ -163,15 +163,15 @@ body {
 /* "At Terminal" label above pulsing markers */
 .at-terminal-label {
   position: absolute;
-  top: -14px;
+  top: -24px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
-  font-size: 10px;
+  font-size: 20px;
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
   white-space: nowrap;
   z-index: 20;
   pointer-events: none;
