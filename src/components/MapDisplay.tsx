@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
+import ArrivalToasts from './ArrivalToasts';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -49,6 +50,8 @@ const TERMINAL_PLATFORMS: { stopId: string; label: string; lat: number; lon: num
     { stopId: '9013', label: 'P13', lat: 44.3741352, lon: -79.6904421 },
     { stopId: '9014', label: 'P14', lat: 44.373528, lon: -79.691139 },
 ];
+
+const TERMINAL_STOP_IDS = ['9003', '9004', '9005', '9006', '9012', '9013', '9014'];
 
 // Affine Transformation Solver (Least Squares with Centering)
 const solveAffine = (points: CalibrationPoint[]) => {
@@ -230,6 +233,8 @@ const MapDisplay: React.FC = () => {
                     </div>
                 )}
 
+                <ArrivalToasts vehicles={vehicles} />
+
                 {/* Render Vehicles */}
                 {vehicles.map(v => {
                     const pos = getPixelPosition(v.lat, v.lon);
@@ -238,14 +243,9 @@ const MapDisplay: React.FC = () => {
                     // Determine Direction for Route 8 (8A/8B)
                     let displayRouteId = v.routeId || '';
                     if ((v.routeId === '8A' || v.routeId === '8B')) {
-                        // Priority: Use GTFS direction_id if available (Stable)
                         if (v.directionId !== undefined) {
-                            // Usually 0 = Outbound (North?), 1 = Inbound (South?)
-                            // We will try this mapping. If swapped, user can correct.
                             displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
-                        }
-                        // Fallback: Use Bearing (Instantaneous)
-                        else if (v.bearing !== undefined) {
+                        } else if (v.bearing !== undefined) {
                             if (v.bearing > 270 || v.bearing <= 90) {
                                 displayRouteId += ' NB';
                             } else {
@@ -253,6 +253,11 @@ const MapDisplay: React.FC = () => {
                             }
                         }
                     }
+
+                    // Determine if bus is at a terminal platform
+                    const isAtTerminal = v.currentStatus === 1
+                        && v.stopId != null
+                        && TERMINAL_STOP_IDS.includes(v.stopId);
 
                     return (
                         <div
@@ -262,7 +267,7 @@ const MapDisplay: React.FC = () => {
                             title={`Bus ${v.id}`}
                         >
                             <div
-                                className="bus-icon-wrapper"
+                                className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}
                                 style={{ backgroundColor: routeColor, borderColor: routeColor }}
                             >
                                 <span className="bus-route-number">{displayRouteId}</span>

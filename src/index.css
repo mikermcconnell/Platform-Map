@@ -71,6 +71,55 @@ body {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
+/* Arrival Toast Notifications */
+.arrival-toasts {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: 500px;
+}
+
+.arrival-toast {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 30px;
+  margin-bottom: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: toast-slide-in 0.4s ease-out;
+}
+
+.toast-separator {
+  opacity: 0.8;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* At-terminal glow for bus markers */
+.at-terminal {
+  box-shadow: 0 0 15px 5px currentColor, 0 4px 8px rgba(0, 0, 0, 0.4);
+  animation: terminal-pulse 2s ease-in-out infinite;
+  transform: scale(1.1);
+}
+
+@keyframes terminal-pulse {
+  0%, 100% { box-shadow: 0 0 10px 3px currentColor; }
+  50% { box-shadow: 0 0 20px 8px currentColor; }
+}
+
 /* Platform Labels */
 .platform-label {
   position: absolute;
