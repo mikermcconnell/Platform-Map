@@ -46,7 +46,7 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
         text.setAttribute('fill', 'white');
         text.setAttribute('font-family', 'Arial, sans-serif');
         text.setAttribute('font-weight', 'bold');
-        text.setAttribute('font-size', routeLabel.length > 3 ? '80' : '100');
+        text.setAttribute('font-size', routeLabel.length > 3 ? '120' : '150');
         text.textContent = routeLabel;
         svg.appendChild(text);
 
