@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 const BODY_COLOR_PLACEHOLDER = '#ef52ef';
+const SVG_NS = 'http://www.w3.org/2000/svg';
 let svgCache: string | null = null;
 
 interface BusIconProps {
@@ -23,7 +24,7 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
             .catch(() => {});
     }, []);
 
-    // Use ref callback to safely inject our own local SVG asset with color swap.
+    // Inject SVG with route color swap and route label as SVG text
     // This SVG is bundled in /public/assets/ — it is not untrusted external content.
     const injectSvg = useCallback(() => {
         if (!svgCache || !containerRef.current) return;
@@ -35,8 +36,24 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
         const svg = doc.documentElement;
         svg.setAttribute('width', '100%');
         svg.setAttribute('height', '100%');
+
+        // Inject route label as SVG text on the destination sign area
+        // ViewBox is 0 0 436.14 572.47 — headsign area is upper-center
+        const text = doc.createElementNS(SVG_NS, 'text');
+        text.setAttribute('x', '218');
+        text.setAttribute('y', '195');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('font-family', 'Arial, sans-serif');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('font-size', routeLabel.length > 3 ? '70' : '90');
+        text.setAttribute('style', 'text-shadow: 2px 2px 4px rgba(0,0,0,0.7)');
+        text.textContent = routeLabel;
+        svg.appendChild(text);
+
         containerRef.current.replaceChildren(svg);
-    }, [routeColor, svgLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [routeColor, routeLabel, svgLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         injectSvg();
@@ -56,10 +73,7 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
     }
 
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
-            <span className="bus-route-number">{routeLabel}</span>
-        </div>
+        <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
     );
 };
 
