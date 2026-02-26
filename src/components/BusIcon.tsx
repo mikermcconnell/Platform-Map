@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 const BODY_COLOR_PLACEHOLDER = '#ef52ef';
+const SVG_NS = 'http://www.w3.org/2000/svg';
 let svgCache: string | null = null;
 
 interface BusIconProps {
     routeColor: string;
+    routeLabel: string;
 }
 
-const BusIcon: React.FC<BusIconProps> = ({ routeColor }) => {
+const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
     const [svgLoaded, setSvgLoaded] = useState<boolean>(!!svgCache);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -34,8 +36,22 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor }) => {
         const svg = doc.documentElement;
         svg.setAttribute('width', '100%');
         svg.setAttribute('height', '100%');
+
+        // Add route number text in the top shield area (above the bus)
+        const text = doc.createElementNS(SVG_NS, 'text');
+        text.setAttribute('x', '218');
+        text.setAttribute('y', '145');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('font-family', 'Arial, sans-serif');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('font-size', routeLabel.length > 3 ? '80' : '100');
+        text.textContent = routeLabel;
+        svg.appendChild(text);
+
         containerRef.current.replaceChildren(svg);
-    }, [routeColor, svgLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [routeColor, routeLabel, svgLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         injectSvg();
