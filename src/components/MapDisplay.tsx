@@ -39,6 +39,17 @@ const ROUTE_COLORS: Record<string, string> = {
 
 const DEFAULT_COLOR = '#0055A4'; // Default Blue
 
+// Terminal platform positions — GPS coords from GTFS static feed
+const TERMINAL_PLATFORMS: { stopId: string; label: string; lat: number; lon: number }[] = [
+    { stopId: '9003', label: 'P3', lat: 44.3738731, lon: -79.6893516 },
+    { stopId: '9004', label: 'P4', lat: 44.3738992, lon: -79.6895402 },
+    { stopId: '9005', label: 'P5', lat: 44.3739253, lon: -79.6897531 },
+    { stopId: '9006', label: 'Terminal', lat: 44.3742472, lon: -79.6896899 },
+    { stopId: '9012', label: 'P12', lat: 44.3742136, lon: -79.6904055 },
+    { stopId: '9013', label: 'P13', lat: 44.3741352, lon: -79.6904421 },
+    { stopId: '9014', label: 'P14', lat: 44.373528, lon: -79.691139 },
+];
+
 // Affine Transformation Solver (Least Squares with Centering)
 const solveAffine = (points: CalibrationPoint[]) => {
     if (points.length < 3) return null;
@@ -260,7 +271,19 @@ const MapDisplay: React.FC = () => {
                     );
                 })}
 
-                {/* Calibration Overlay - Removed */}
+                {/* Platform Labels */}
+                {affineMatrix && TERMINAL_PLATFORMS.map(p => {
+                    const pos = getPixelPosition(p.lat, p.lon);
+                    return (
+                        <div
+                            key={p.stopId}
+                            className="platform-label"
+                            style={{ left: pos.left, top: pos.top }}
+                        >
+                            {p.label}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
