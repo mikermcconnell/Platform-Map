@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
 import RouteLegend from './RouteLegend';
+import ClockDisplay from './ClockDisplay';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -216,6 +217,8 @@ const MapDisplay: React.FC = () => {
                     onError={(e) => console.error("Failed to load map image", e.currentTarget.src)}
                     onLoad={updateDimensions}
                 />
+
+                <ClockDisplay />
 
                 {/* Loading Indicator */}
                 {isLoading && (
