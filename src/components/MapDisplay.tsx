@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
+import RouteLegend from './RouteLegend';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -289,6 +290,8 @@ const MapDisplay: React.FC = () => {
                         </div>
                     );
                 })}
+
+                <RouteLegend vehicles={vehicles} />
             </div>
         </div>
     );
