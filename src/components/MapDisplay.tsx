@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
-import RouteLegend from './RouteLegend';
-import ClockDisplay from './ClockDisplay';
 import AlertBanner from './AlertBanner';
 import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS } from '../config/routes';
 
@@ -23,17 +21,6 @@ const CALIBRATION_DATA: CalibrationPoint[] = [
     { "lat": 44.373833, "lon": -79.689139, "x": 62.0475, "y": 54.1164 },   // Platform 2
     { "lat": 44.374250, "lon": -79.689750, "x": 42.0260, "y": 38.5291 },   // Platform 6
     { "lat": 44.373528, "lon": -79.691139, "x": 7.7520, "y": 80.5708 }     // Platform 14
-];
-
-// Terminal platform positions — GPS coords from GTFS static feed
-const TERMINAL_PLATFORMS: { stopId: string; label: string; lat: number; lon: number }[] = [
-    { stopId: '9003', label: 'P3', lat: 44.3738731, lon: -79.6893516 },
-    { stopId: '9004', label: 'P4', lat: 44.3738992, lon: -79.6895402 },
-    { stopId: '9005', label: 'P5', lat: 44.3739253, lon: -79.6897531 },
-    { stopId: '9006', label: 'Terminal', lat: 44.3742472, lon: -79.6896899 },
-    { stopId: '9012', label: 'P12', lat: 44.3742136, lon: -79.6904055 },
-    { stopId: '9013', label: 'P13', lat: 44.3741352, lon: -79.6904421 },
-    { stopId: '9014', label: 'P14', lat: 44.373528, lon: -79.691139 },
 ];
 
 // Affine Transformation Solver (Least Squares with Centering)
@@ -199,7 +186,6 @@ const MapDisplay: React.FC = () => {
                     onLoad={updateDimensions}
                 />
 
-                <ClockDisplay />
                 <AlertBanner />
 
                 {/* Loading Indicator */}
@@ -262,21 +248,6 @@ const MapDisplay: React.FC = () => {
                     );
                 })}
 
-                {/* Platform Labels */}
-                {affineMatrix && TERMINAL_PLATFORMS.map(p => {
-                    const pos = getPixelPosition(p.lat, p.lon);
-                    return (
-                        <div
-                            key={p.stopId}
-                            className="platform-label"
-                            style={{ left: pos.left, top: pos.top }}
-                        >
-                            {p.label}
-                        </div>
-                    );
-                })}
-
-                <RouteLegend vehicles={vehicles} />
             </div>
         </div>
     );
