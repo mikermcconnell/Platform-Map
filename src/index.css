@@ -282,3 +282,20 @@ body {
   border: none;
   cursor: pointer;
 }
+
+/* Testing banner */
+.testing-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ef4444;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  padding: 6px 0;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  z-index: 100;
+}

@@ -252,6 +252,7 @@ const MapDisplay: React.FC = () => {
                 })}
 
             </div>
+            <div className="testing-banner">TESTING</div>
         </div>
     );
 };
