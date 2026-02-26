@@ -5,6 +5,8 @@ export interface VehiclePosition {
     routeId?: string;
     directionId?: number;
     bearing?: number;
+    currentStatus?: number;  // 0=INCOMING_AT, 1=STOPPED_AT, 2=IN_TRANSIT_TO
+    stopId?: string;
 }
 
 // API response type for type safety
@@ -15,6 +17,8 @@ interface VehicleAPIResponse {
     route_id?: string;
     direction_id?: number;
     bearing?: number;
+    current_status?: number;
+    stop_id?: string;
 }
 
 interface VehiclesAPIResponse {
@@ -46,7 +50,9 @@ export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
                     lon: v.lon,
                     routeId: v.route_id,
                     directionId: v.direction_id,
-                    bearing: v.bearing ?? 0
+                    bearing: v.bearing ?? 0,
+                    currentStatus: v.current_status ?? undefined,
+                    stopId: v.stop_id ?? undefined,
                 });
             });
         }
