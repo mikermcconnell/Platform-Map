@@ -36,7 +36,7 @@ export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
         stopName: 'Platform 5',
         lat: 44.3739253,
         lon: -79.6897531,
-        radiusMeters: 120,
+        radiusMeters: 25,
     },
     {
         routeId: '8B',
@@ -44,7 +44,7 @@ export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
         stopName: 'Platform 12',
         lat: 44.3742136,
         lon: -79.6904055,
-        radiusMeters: 75,
+        radiusMeters: 25,
     },
     {
         routeId: '7A',
@@ -52,7 +52,7 @@ export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
         stopName: 'Platform 6',
         lat: 44.3742472,
         lon: -79.6896899,
-        radiusMeters: 75,
+        radiusMeters: 25,
     },
 ];
 
