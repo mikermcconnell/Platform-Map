@@ -159,7 +159,7 @@ body {
 /* "At Platform" label above pulsing markers */
 .at-terminal-label {
   position: absolute;
-  top: -32px;
+  top: -44px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
