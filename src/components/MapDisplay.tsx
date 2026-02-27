@@ -98,6 +98,7 @@ const MapDisplay: React.FC = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const terminalStickyRef = useRef<Map<string, number>>(new Map());
+    const departedStickyRef = useRef<Map<string, number>>(new Map());
 
     // Resize handler - extracted for cleanup
     const updateDimensions = useCallback(() => {
@@ -221,15 +222,19 @@ const MapDisplay: React.FC = () => {
 
                 {/* ArrivalToasts rendered outside map container below */}
 
-                {/* Compute sticky terminal set */}
+                {/* Compute sticky terminal + departed sets */}
                 {(() => {
                     const now = Date.now();
                     const stickyMap = terminalStickyRef.current;
+                    const departedMap = departedStickyRef.current;
                     // Clean expired
                     for (const [id, expiry] of stickyMap) {
                         if (expiry < now) stickyMap.delete(id);
                     }
-                    // Update sticky map for all vehicles
+                    for (const [id, expiry] of departedMap) {
+                        if (expiry < now) departedMap.delete(id);
+                    }
+                    // Update sticky maps for all vehicles
                     for (const v of vehicles) {
                         const standardHit = v.currentStatus === 1
                             && v.stopId != null
@@ -240,13 +245,22 @@ const MapDisplay: React.FC = () => {
                                 && g.directionId === v.directionId
                                 && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
                             );
+                        const isIncomingAtTerminal = v.currentStatus === 0
+                            && v.stopId != null
+                            && TERMINAL_STOP_IDS.includes(v.stopId);
                         if (standardHit || geofenceHit) {
                             stickyMap.set(v.id, now + 90_000);
+                            departedMap.delete(v.id);
                         } else if (stickyMap.has(v.id)
                             && v.stopId != null
                             && !TERMINAL_STOP_IDS.includes(v.stopId)) {
-                            // Vehicle reporting a non-terminal stop — clear sticky
+                            // Vehicle departed — move to departed sticky
                             stickyMap.delete(v.id);
+                            departedMap.set(v.id, now + 90_000);
+                        }
+                        // Clear stale departed state if bus is arriving again
+                        if (isIncomingAtTerminal) {
+                            departedMap.delete(v.id);
                         }
                     }
                     return null;
@@ -271,8 +285,14 @@ const MapDisplay: React.FC = () => {
                         }
                     }
 
-                    // Determine if bus is at a terminal platform (standard + geofence + sticky)
+                    // Determine bus terminal state
                     const isAtTerminal = terminalStickyRef.current.has(v.id);
+                    const isArriving = !isAtTerminal
+                        && v.currentStatus === 0
+                        && v.stopId != null
+                        && TERMINAL_STOP_IDS.includes(v.stopId);
+                    const isDeparted = !isAtTerminal && !isArriving
+                        && departedStickyRef.current.has(v.id);
 
                     return (
                         <div
@@ -281,8 +301,14 @@ const MapDisplay: React.FC = () => {
                             style={{ left: pos.left, top: pos.top }}
                             title={`Bus ${v.id}`}
                         >
+                            {isArriving && (
+                                <span className="arriving-label">Arriving</span>
+                            )}
                             {isAtTerminal && (
                                 <span className="at-terminal-label">At Platform</span>
+                            )}
+                            {isDeparted && (
+                                <span className="departed-label">Departed</span>
                             )}
                             <div className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}>
                                 <BusIcon routeColor={routeColor} routeLabel={displayRouteId} />
