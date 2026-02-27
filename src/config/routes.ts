@@ -38,6 +38,14 @@ export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
         lon: -79.6904055,
         radiusMeters: 75,
     },
+    {
+        routeId: '7A',
+        directionId: 0,
+        stopName: 'Platform 6',
+        lat: 44.3742472,
+        lon: -79.6896899,
+        radiusMeters: 75,
+    },
 ];
 
 export const TERMINAL_STOP_NAMES: Record<string, string> = {
