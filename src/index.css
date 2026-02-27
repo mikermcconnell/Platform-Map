@@ -107,24 +107,25 @@ body {
   font-weight: bold;
   padding: 4px 14px;
   border-radius: 4px;
-  margin-right: 14px;
+  margin-right: 10px;
   min-width: 60px;
   text-align: center;
+  vertical-align: middle;
 }
 
 .arrival-board-platform {
   color: white;
   font-size: 24px;
   font-weight: bold;
-  margin-right: 14px;
+  vertical-align: middle;
 }
 
 .arrival-board-status {
-  font-size: 22px;
+  display: block;
+  font-size: 20px;
   font-weight: bold;
   letter-spacing: 0.5px;
-  float: right;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .status-arrived {

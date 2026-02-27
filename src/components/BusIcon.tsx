@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
-const BODY_COLOR_PLACEHOLDER = '#ef52ef';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 let svgCache: string | null = null;
 
@@ -29,13 +28,15 @@ const BusIcon: React.FC<BusIconProps> = ({ routeColor, routeLabel }) => {
     const injectSvg = useCallback(() => {
         if (!svgCache || !containerRef.current) return;
         const parser = new DOMParser();
-        const doc = parser.parseFromString(
-            svgCache.replace(new RegExp(BODY_COLOR_PLACEHOLDER, 'gi'), routeColor),
-            'image/svg+xml'
-        );
+        const doc = parser.parseFromString(svgCache, 'image/svg+xml');
         const svg = doc.documentElement;
         svg.setAttribute('width', '100%');
         svg.setAttribute('height', '100%');
+
+        // Set fill via inline style to override shared CSS class rules
+        svg.querySelectorAll('.st21').forEach(el => {
+            (el as SVGElement).style.fill = routeColor;
+        });
 
         // Add route number text in the top shield area (above the bus)
         const text = doc.createElementNS(SVG_NS, 'text');
