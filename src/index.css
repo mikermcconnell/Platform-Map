@@ -149,6 +149,8 @@ body {
 .at-terminal {
   box-shadow: 0 0 12px 4px currentColor;
   animation: terminal-pulse 2s ease-in-out infinite;
+  padding: 6px;
+  margin: -6px;
 }
 
 @keyframes terminal-pulse {
