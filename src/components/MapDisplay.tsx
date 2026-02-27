@@ -254,8 +254,8 @@ const MapDisplay: React.FC = () => {
                             departedMap.delete(v.id);
                         } else if (stickyMap.has(v.id)) {
                             if ((v.stopId != null && !TERMINAL_STOP_IDS.includes(v.stopId))
-                                || v.currentStatus !== 1) {
-                                // Non-terminal stop reported, or no longer STOPPED_AT — departed
+                                || v.currentStatus === 2) {
+                                // Non-terminal stop reported, or IN_TRANSIT_TO — departed
                                 stickyMap.delete(v.id);
                                 departedMap.set(v.id, now + 90_000);
                             }
