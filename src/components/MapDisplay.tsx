@@ -252,13 +252,12 @@ const MapDisplay: React.FC = () => {
                         if (standardHit || geofenceHit) {
                             stickyMap.set(v.id, now + 90_000);
                             departedMap.delete(v.id);
-                        } else if (stickyMap.has(v.id)) {
-                            if ((v.stopId != null && !TERMINAL_STOP_IDS.includes(v.stopId))
-                                || v.currentStatus === 2) {
-                                // Non-terminal stop reported, or IN_TRANSIT_TO — departed
-                                stickyMap.delete(v.id);
-                                departedMap.set(v.id, now + 90_000);
-                            }
+                        } else if (stickyMap.has(v.id)
+                            && v.stopId != null
+                            && !TERMINAL_STOP_IDS.includes(v.stopId)) {
+                            // Non-terminal stop reported — departed
+                            stickyMap.delete(v.id);
+                            departedMap.set(v.id, now + 90_000);
                         }
                         // Clear stale departed state if bus is arriving again
                         if (isIncomingAtTerminal) {
