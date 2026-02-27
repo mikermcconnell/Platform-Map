@@ -93,6 +93,7 @@ const MapDisplay: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [animationReady, setAnimationReady] = useState(false);
     const [affineMatrix, setAffineMatrix] = useState<{ A: number, B: number, C: number, D: number, E: number, F: number } | null>(null);
+    const [sidebarLeft, setSidebarLeft] = useState<number | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
@@ -126,6 +127,14 @@ const MapDisplay: React.FC = () => {
         mapRef.current.style.position = 'absolute';
         mapRef.current.style.left = `${left}px`;
         mapRef.current.style.top = `${top}px`;
+
+        // Track where the map's right edge is for sidebar positioning
+        const rightMargin = screenW - (left + width);
+        if (rightMargin > 100) {
+            setSidebarLeft(left + width);
+        } else {
+            setSidebarLeft(null);
+        }
     }, []);
 
     // Resize listener with proper cleanup
@@ -208,7 +217,7 @@ const MapDisplay: React.FC = () => {
                     </div>
                 )}
 
-                <ArrivalToasts vehicles={vehicles} />
+                {/* ArrivalToasts rendered outside map container below */}
 
                 {/* Render Vehicles */}
                 {vehicles.map(v => {
@@ -252,6 +261,9 @@ const MapDisplay: React.FC = () => {
                 })}
 
             </div>
+            {sidebarLeft !== null && (
+                <ArrivalToasts vehicles={vehicles} sidebarLeft={sidebarLeft} />
+            )}
             <div className="testing-banner">TESTING</div>
         </div>
     );
