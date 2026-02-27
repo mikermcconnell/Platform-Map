@@ -61,9 +61,14 @@ const ArrivalToasts: React.FC<ArrivalToastsProps> = ({ vehicles, sidebarLeft }) 
                 // Refresh sticky timer
                 stickyMap.set(v.id, { expiry: now + STICKY_HOLD_MS, platformName });
             } else if (stickyMap.has(v.id)) {
-                // Vehicle not currently detected but within sticky hold window
-                platformName = stickyMap.get(v.id)!.platformName;
-                isActive = true;
+                // Check if vehicle has clearly departed (reporting a non-terminal stop)
+                if (v.stopId != null && !TERMINAL_STOP_NAMES[v.stopId]) {
+                    stickyMap.delete(v.id);
+                } else {
+                    // Ambiguous state — hold sticky
+                    platformName = stickyMap.get(v.id)!.platformName;
+                    isActive = true;
+                }
             }
 
             if (!isActive || !platformName) return null;

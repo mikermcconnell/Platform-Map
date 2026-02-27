@@ -242,6 +242,11 @@ const MapDisplay: React.FC = () => {
                             );
                         if (standardHit || geofenceHit) {
                             stickyMap.set(v.id, now + 90_000);
+                        } else if (stickyMap.has(v.id)
+                            && v.stopId != null
+                            && !TERMINAL_STOP_IDS.includes(v.stopId)) {
+                            // Vehicle reporting a non-terminal stop — clear sticky
+                            stickyMap.delete(v.id);
                         }
                     }
                     return null;
