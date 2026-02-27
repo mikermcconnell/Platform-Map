@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { VehiclePosition } from '../services/gtfs';
-import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_NAMES } from '../config/routes';
+import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_NAMES, GEOFENCE_OVERRIDES } from '../config/routes';
+import { isWithinGeofence } from '../utils/geofence';
 
 // GTFS-RT current_status enum values
 const STOPPED_AT = 1;
 const INCOMING_AT = 0;
+
+const STICKY_HOLD_MS = 90_000;
+
+interface StickyEntry {
+    expiry: number;
+    platformName: string;
+}
 
 interface ArrivalToastsProps {
     vehicles: VehiclePosition[];
@@ -12,24 +20,81 @@ interface ArrivalToastsProps {
 }
 
 const ArrivalToasts: React.FC<ArrivalToastsProps> = ({ vehicles, sidebarLeft }) => {
-    // Derive board entries directly from current vehicle state — no timers.
-    // Entry stays as long as the feed reports the bus at a terminal platform.
+    const stickyMapRef = useRef<Map<string, StickyEntry>>(new Map());
+    const stickyMap = stickyMapRef.current;
+    const now = Date.now();
+
+    // Clean expired entries
+    for (const [id, entry] of stickyMap) {
+        if (entry.expiry < now) stickyMap.delete(id);
+    }
+
     const entries = vehicles
-        .filter(v => {
-            if (!v.stopId || !v.routeId) return false;
-            if (!TERMINAL_STOP_NAMES[v.stopId]) return false;
-            return v.currentStatus === STOPPED_AT || v.currentStatus === INCOMING_AT;
-        })
         .map(v => {
-            const status = v.currentStatus === STOPPED_AT ? 'arrived' : 'arriving';
+            if (!v.routeId) return null;
+
+            // Standard terminal detection
+            const isTerminalStatus =
+                v.stopId != null
+                && TERMINAL_STOP_NAMES[v.stopId] != null
+                && (v.currentStatus === STOPPED_AT || v.currentStatus === INCOMING_AT);
+
+            // Geofence override detection
+            const geofenceMatch = GEOFENCE_OVERRIDES.find(g =>
+                g.routeId === v.routeId
+                && g.directionId === v.directionId
+                && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
+            );
+
+            let platformName: string | undefined;
+            let isActive = false;
+
+            if (isTerminalStatus) {
+                platformName = TERMINAL_STOP_NAMES[v.stopId!];
+                isActive = true;
+            } else if (geofenceMatch) {
+                platformName = geofenceMatch.stopName;
+                isActive = true;
+            }
+
+            if (isActive && platformName) {
+                // Refresh sticky timer
+                stickyMap.set(v.id, { expiry: now + STICKY_HOLD_MS, platformName });
+            } else if (stickyMap.has(v.id)) {
+                // Vehicle not currently detected but within sticky hold window
+                platformName = stickyMap.get(v.id)!.platformName;
+                isActive = true;
+            }
+
+            if (!isActive || !platformName) return null;
+
+            // Determine display status
+            let status: 'arrived' | 'arriving';
+            if (v.currentStatus === INCOMING_AT && isTerminalStatus) {
+                status = 'arriving';
+            } else {
+                // STOPPED_AT, geofence match, or sticky holdover — all show as arrived
+                status = 'arrived';
+            }
+
+            let displayRouteId = v.routeId;
+            if (v.routeId === '8A' || v.routeId === '8B') {
+                if (v.directionId !== undefined) {
+                    displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
+                } else if (v.bearing !== undefined) {
+                    displayRouteId += (v.bearing > 270 || v.bearing <= 90) ? ' NB' : ' SB';
+                }
+            }
+
             return {
                 id: v.id,
-                routeId: v.routeId!,
-                platformName: TERMINAL_STOP_NAMES[v.stopId!],
+                routeId: displayRouteId,
+                platformName,
                 status,
-                color: ROUTE_COLORS[v.routeId!] || DEFAULT_COLOR,
+                color: ROUTE_COLORS[v.routeId] || DEFAULT_COLOR,
             };
-        });
+        })
+        .filter((e): e is NonNullable<typeof e> => e !== null);
 
     if (entries.length === 0) return null;
 

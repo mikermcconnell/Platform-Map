@@ -103,29 +103,28 @@ body {
 .arrival-board-route {
   display: inline-block;
   color: white;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: bold;
-  padding: 4px 14px;
+  padding: 4px 12px;
   border-radius: 4px;
-  margin-right: 10px;
-  min-width: 60px;
   text-align: center;
-  vertical-align: middle;
+  margin-bottom: 4px;
 }
 
 .arrival-board-platform {
+  display: block;
   color: white;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
-  vertical-align: middle;
+  margin-top: 2px;
 }
 
 .arrival-board-status {
   display: block;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.5px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .status-arrived {
@@ -278,21 +277,4 @@ body {
   z-index: 50;
   border: none;
   cursor: pointer;
-}
-
-/* Testing banner */
-.testing-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #ef4444;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  padding: 6px 0;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  z-index: 100;
 }

@@ -20,6 +20,26 @@ export const ROUTE_ORDER = ['2A','2B','7A','7B','8A','8B','10','11','12A','12B',
 
 export const TERMINAL_STOP_IDS = ['14','9003','9004','9005','9006','9012','9013','9014'];
 
+export interface GeofenceOverride {
+    routeId: string;
+    directionId: number;
+    stopName: string;
+    lat: number;
+    lon: number;
+    radiusMeters: number;
+}
+
+export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
+    {
+        routeId: '8B',
+        directionId: 0, // northbound only
+        stopName: 'Platform 12',
+        lat: 44.3742136,
+        lon: -79.6904055,
+        radiusMeters: 75,
+    },
+];
+
 export const TERMINAL_STOP_NAMES: Record<string, string> = {
     '14': 'Platform 14',
     '9003': 'Platform 3',

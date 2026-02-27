@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
 import BusIcon from './BusIcon';
-import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS } from '../config/routes';
+import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS, GEOFENCE_OVERRIDES } from '../config/routes';
+import { isWithinGeofence } from '../utils/geofence';
 
 // Constants
 const POLL_INTERVAL_MS = 15000;
@@ -96,6 +97,7 @@ const MapDisplay: React.FC = () => {
     const [sidebarLeft, setSidebarLeft] = useState<number | null>(null);
     const mapRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
+    const terminalStickyRef = useRef<Map<string, number>>(new Map());
 
     // Resize handler - extracted for cleanup
     const updateDimensions = useCallback(() => {
@@ -219,6 +221,32 @@ const MapDisplay: React.FC = () => {
 
                 {/* ArrivalToasts rendered outside map container below */}
 
+                {/* Compute sticky terminal set */}
+                {(() => {
+                    const now = Date.now();
+                    const stickyMap = terminalStickyRef.current;
+                    // Clean expired
+                    for (const [id, expiry] of stickyMap) {
+                        if (expiry < now) stickyMap.delete(id);
+                    }
+                    // Update sticky map for all vehicles
+                    for (const v of vehicles) {
+                        const standardHit = v.currentStatus === 1
+                            && v.stopId != null
+                            && TERMINAL_STOP_IDS.includes(v.stopId);
+                        const geofenceHit = v.routeId != null
+                            && GEOFENCE_OVERRIDES.some(g =>
+                                g.routeId === v.routeId
+                                && g.directionId === v.directionId
+                                && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
+                            );
+                        if (standardHit || geofenceHit) {
+                            stickyMap.set(v.id, now + 90_000);
+                        }
+                    }
+                    return null;
+                })()}
+
                 {/* Render Vehicles */}
                 {vehicles.map(v => {
                     const pos = getPixelPosition(v.lat, v.lon);
@@ -238,10 +266,8 @@ const MapDisplay: React.FC = () => {
                         }
                     }
 
-                    // Determine if bus is at a terminal platform
-                    const isAtTerminal = v.currentStatus === 1
-                        && v.stopId != null
-                        && TERMINAL_STOP_IDS.includes(v.stopId);
+                    // Determine if bus is at a terminal platform (standard + geofence + sticky)
+                    const isAtTerminal = terminalStickyRef.current.has(v.id);
 
                     return (
                         <div
@@ -264,7 +290,6 @@ const MapDisplay: React.FC = () => {
             {sidebarLeft !== null && (
                 <ArrivalToasts vehicles={vehicles} sidebarLeft={sidebarLeft} />
             )}
-            <div className="testing-banner">TESTING</div>
         </div>
     );
 };
