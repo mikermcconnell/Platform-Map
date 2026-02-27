@@ -245,18 +245,20 @@ const MapDisplay: React.FC = () => {
                                 && g.directionId === v.directionId
                                 && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
                             );
-                        const isIncomingAtTerminal = v.currentStatus === 0
+                        const isIncomingAtTerminal =
+                            (v.currentStatus === 0 || v.currentStatus === 2)
                             && v.stopId != null
                             && TERMINAL_STOP_IDS.includes(v.stopId);
                         if (standardHit || geofenceHit) {
                             stickyMap.set(v.id, now + 90_000);
                             departedMap.delete(v.id);
-                        } else if (stickyMap.has(v.id)
-                            && v.stopId != null
-                            && !TERMINAL_STOP_IDS.includes(v.stopId)) {
-                            // Vehicle departed — move to departed sticky
-                            stickyMap.delete(v.id);
-                            departedMap.set(v.id, now + 90_000);
+                        } else if (stickyMap.has(v.id)) {
+                            if ((v.stopId != null && !TERMINAL_STOP_IDS.includes(v.stopId))
+                                || v.currentStatus !== 1) {
+                                // Non-terminal stop reported, or no longer STOPPED_AT — departed
+                                stickyMap.delete(v.id);
+                                departedMap.set(v.id, now + 90_000);
+                            }
                         }
                         // Clear stale departed state if bus is arriving again
                         if (isIncomingAtTerminal) {
@@ -288,7 +290,7 @@ const MapDisplay: React.FC = () => {
                     // Determine bus terminal state
                     const isAtTerminal = terminalStickyRef.current.has(v.id);
                     const isArriving = !isAtTerminal
-                        && v.currentStatus === 0
+                        && (v.currentStatus === 0 || v.currentStatus === 2)
                         && v.stopId != null
                         && TERMINAL_STOP_IDS.includes(v.stopId);
                     const isDeparted = !isAtTerminal && !isArriving
