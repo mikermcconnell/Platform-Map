@@ -1,17 +1,14 @@
 import React, { useRef } from 'react';
 import { VehiclePosition } from '../services/gtfs';
 import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_NAMES, GEOFENCE_OVERRIDES } from '../config/routes';
-import { isWithinGeofence } from '../utils/geofence';
-
-// GTFS-RT current_status enum values
-const STOPPED_AT = 1;
-const INCOMING_AT = 0;
+import { classifyTerminalState, hasNonTerminalStopUpdate } from '../utils/terminalState';
 
 const STICKY_HOLD_MS = 90_000;
 
 interface StickyEntry {
     expiry: number;
     platformName: string;
+    status: 'arrived' | 'arriving';
 }
 
 interface ArrivalToastsProps {
@@ -32,59 +29,35 @@ const ArrivalToasts: React.FC<ArrivalToastsProps> = ({ vehicles, sidebarLeft }) 
     const entries = vehicles
         .map(v => {
             if (!v.routeId) return null;
-
-            // Standard terminal detection
-            const isTerminalStatus =
-                v.stopId != null
-                && TERMINAL_STOP_NAMES[v.stopId] != null
-                && (v.currentStatus === STOPPED_AT || v.currentStatus === INCOMING_AT);
-
-            // Geofence override detection
-            const geofenceMatch = GEOFENCE_OVERRIDES.find(g =>
-                g.routeId === v.routeId
-                && g.directionId === v.directionId
-                && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
+            const terminalState = classifyTerminalState(
+                v,
+                TERMINAL_STOP_NAMES,
+                GEOFENCE_OVERRIDES,
             );
 
-            let platformName: string | undefined;
-            let isActive = false;
+            let platformName: string | undefined = terminalState.platformName;
+            let status: 'arrived' | 'arriving' | undefined;
+            const isActiveNow = (terminalState.atTerminal || terminalState.arriving) && platformName != null;
 
-            if (isTerminalStatus) {
-                platformName = TERMINAL_STOP_NAMES[v.stopId!];
-                isActive = true;
-            } else if (geofenceMatch) {
-                platformName = geofenceMatch.stopName;
-                isActive = true;
-            }
-
-            if (isActive && platformName) {
-                // Refresh sticky timer
-                stickyMap.set(v.id, { expiry: now + STICKY_HOLD_MS, platformName });
+            if (isActiveNow) {
+                status = terminalState.atTerminal ? 'arrived' : 'arriving';
+                stickyMap.set(v.id, { expiry: now + STICKY_HOLD_MS, platformName: platformName!, status });
             } else if (stickyMap.has(v.id)) {
-                // Check if vehicle has clearly departed (reporting a non-terminal stop)
-                if (v.stopId != null && !TERMINAL_STOP_NAMES[v.stopId]) {
+                // Vehicle has moved to a clearly non-terminal stop and is no longer near terminal geofence.
+                if (hasNonTerminalStopUpdate(v, TERMINAL_STOP_NAMES) && !terminalState.geofenceInArea) {
                     stickyMap.delete(v.id);
                 } else {
-                    // Ambiguous state — hold sticky
-                    platformName = stickyMap.get(v.id)!.platformName;
-                    isActive = true;
+                    const stickyEntry = stickyMap.get(v.id)!;
+                    platformName = stickyEntry.platformName;
+                    status = stickyEntry.status;
                 }
             }
 
-            if (!isActive || !platformName) return null;
-
-            // Determine display status
-            let status: 'arrived' | 'arriving';
-            if (v.currentStatus === INCOMING_AT && isTerminalStatus) {
-                status = 'arriving';
-            } else {
-                // STOPPED_AT, geofence match, or sticky holdover — all show as arrived
-                status = 'arrived';
-            }
+            if (!platformName || !status) return null;
 
             let displayRouteId = v.routeId;
             if (v.routeId === '8A' || v.routeId === '8B') {
-                if (v.directionId !== undefined) {
+                if (v.directionId != null) {
                     displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
                 } else if (v.bearing !== undefined) {
                     displayRouteId += (v.bearing > 270 || v.bearing <= 90) ? ' NB' : ' SB';

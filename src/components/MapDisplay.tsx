@@ -2,11 +2,13 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
 import BusIcon from './BusIcon';
-import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_IDS, GEOFENCE_OVERRIDES } from '../config/routes';
-import { isWithinGeofence } from '../utils/geofence';
+import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_NAMES, GEOFENCE_OVERRIDES } from '../config/routes';
+import { classifyTerminalState, hasNonTerminalStopUpdate } from '../utils/terminalState';
 
 // Constants
-const POLL_INTERVAL_MS = 15000;
+const POLL_INTERVAL_MS = 10000;
+const TERMINAL_STICKY_MS = 90_000;
+const DEPARTED_STICKY_MS = 300_000;
 
 // Calibration Data
 interface CalibrationPoint {
@@ -236,31 +238,25 @@ const MapDisplay: React.FC = () => {
                     }
                     // Update sticky maps for all vehicles
                     for (const v of vehicles) {
-                        const standardHit = v.currentStatus === 1
-                            && v.stopId != null
-                            && TERMINAL_STOP_IDS.includes(v.stopId);
-                        const geofenceHit = v.routeId != null
-                            && GEOFENCE_OVERRIDES.some(g =>
-                                g.routeId === v.routeId
-                                && g.directionId === v.directionId
-                                && isWithinGeofence(v.lat, v.lon, g.lat, g.lon, g.radiusMeters),
-                            );
-                        const isIncomingAtTerminal =
-                            (v.currentStatus === 0 || v.currentStatus === 2)
-                            && v.stopId != null
-                            && TERMINAL_STOP_IDS.includes(v.stopId);
-                        if (standardHit || geofenceHit) {
-                            stickyMap.set(v.id, now + 90_000);
+                        const terminalState = classifyTerminalState(
+                            v,
+                            TERMINAL_STOP_NAMES,
+                            GEOFENCE_OVERRIDES,
+                        );
+
+                        if (terminalState.atTerminal) {
+                            stickyMap.set(v.id, now + TERMINAL_STICKY_MS);
                             departedMap.delete(v.id);
                         } else if (stickyMap.has(v.id)
-                            && v.stopId != null
-                            && !TERMINAL_STOP_IDS.includes(v.stopId)) {
+                            && hasNonTerminalStopUpdate(v, TERMINAL_STOP_NAMES)
+                            && !terminalState.arriving
+                            && !terminalState.geofenceInArea) {
                             // Non-terminal stop reported — departed
                             stickyMap.delete(v.id);
-                            departedMap.set(v.id, now + 90_000);
+                            departedMap.set(v.id, now + DEPARTED_STICKY_MS);
                         }
                         // Clear stale departed state if bus is arriving again
-                        if (isIncomingAtTerminal) {
+                        if (terminalState.arriving) {
                             departedMap.delete(v.id);
                         }
                     }
@@ -275,7 +271,7 @@ const MapDisplay: React.FC = () => {
                     // Determine Direction for Route 8 (8A/8B)
                     let displayRouteId = v.routeId || '';
                     if ((v.routeId === '8A' || v.routeId === '8B')) {
-                        if (v.directionId !== undefined) {
+                        if (v.directionId != null) {
                             displayRouteId += (v.directionId === 0 ? ' NB' : ' SB');
                         } else if (v.bearing !== undefined) {
                             if (v.bearing > 270 || v.bearing <= 90) {
@@ -287,11 +283,13 @@ const MapDisplay: React.FC = () => {
                     }
 
                     // Determine bus terminal state
-                    const isAtTerminal = terminalStickyRef.current.has(v.id);
-                    const isArriving = !isAtTerminal
-                        && (v.currentStatus === 0 || v.currentStatus === 2)
-                        && v.stopId != null
-                        && TERMINAL_STOP_IDS.includes(v.stopId);
+                    const terminalState = classifyTerminalState(
+                        v,
+                        TERMINAL_STOP_NAMES,
+                        GEOFENCE_OVERRIDES,
+                    );
+                    const isAtTerminal = terminalStickyRef.current.has(v.id) || terminalState.atTerminal;
+                    const isArriving = !isAtTerminal && terminalState.arriving;
                     const isDeparted = !isAtTerminal && !isArriving
                         && departedStickyRef.current.has(v.id);
 

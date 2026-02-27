@@ -9,7 +9,8 @@
     "dev": "npm run build:frontend && npx serve frontend/dist -l 3000",
     "dev:react": "vite",
     "build:react": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test:triggers": "node --import tsx --test tests/terminalState.test.ts"
   },
   "dependencies": {
     "gtfs-realtime-bindings": "^1.1.1",
@@ -28,6 +29,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "esbuild": "^0.24.0",
     "terser": "^5.44.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.2",
     "vite": "^7.2.7"
   },

@@ -31,6 +31,14 @@ export interface GeofenceOverride {
 
 export const GEOFENCE_OVERRIDES: GeofenceOverride[] = [
     {
+        routeId: '8A',
+        directionId: 0, // northbound only
+        stopName: 'Platform 5',
+        lat: 44.3739253,
+        lon: -79.6897531,
+        radiusMeters: 120,
+    },
+    {
         routeId: '8B',
         directionId: 0, // northbound only
         stopName: 'Platform 12',
