@@ -164,7 +164,7 @@ body {
   top: -44px;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
+  color: #4ade80;
   font-size: 20px;
   font-weight: bold;
   background-color: #000;
@@ -181,7 +181,7 @@ body {
   top: -32px;
   left: 50%;
   transform: translateX(-50%);
-  color: #4ade80;
+  color: #fbbf24;
   font-size: 20px;
   font-weight: bold;
   background-color: #000;
