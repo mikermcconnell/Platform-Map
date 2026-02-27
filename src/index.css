@@ -41,8 +41,8 @@ body {
 /* Bus Marker Styles */
 .bus-marker {
   position: absolute;
-  width: 112px;
-  height: 180px;
+  width: 84px;
+  height: 135px;
   transform: translate(-50%, -50%);
   transition: left 15s linear, top 15s linear;
   z-index: 10;
@@ -79,9 +79,9 @@ body {
   top: 80px;
   right: 16px;
   z-index: 30;
-  width: 380px;
+  width: 600px;
   background-color: rgba(10, 10, 15, 0.9);
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   animation: board-fade-in 0.3s ease-out;
@@ -90,16 +90,16 @@ body {
 .arrival-board-header {
   background-color: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
+  font-size: 22px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 6px 14px;
+  letter-spacing: 3px;
+  padding: 10px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .arrival-board-row {
-  padding: 10px 14px;
+  padding: 14px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   animation: row-slide-in 0.4s ease-out;
 }
@@ -107,28 +107,28 @@ body {
 .arrival-board-route {
   display: inline-block;
   color: white;
-  font-size: 13px;
+  font-size: 26px;
   font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 3px;
-  margin-right: 10px;
-  min-width: 36px;
+  padding: 4px 14px;
+  border-radius: 4px;
+  margin-right: 14px;
+  min-width: 60px;
   text-align: center;
 }
 
 .arrival-board-platform {
   color: white;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 14px;
 }
 
 .arrival-board-status {
-  font-size: 12px;
+  font-size: 22px;
   font-weight: bold;
   letter-spacing: 0.5px;
   float: right;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .status-arrived {
@@ -160,7 +160,7 @@ body {
   50% { box-shadow: 0 0 16px 6px currentColor; }
 }
 
-/* "At Terminal" label above pulsing markers */
+/* "At Platform" label above pulsing markers */
 .at-terminal-label {
   position: absolute;
   top: -24px;
