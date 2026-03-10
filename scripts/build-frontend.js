@@ -48,18 +48,27 @@ function contentHash(buffer) {
 }
 
 function copyAssets() {
-    // Copy map.jpg and Bus_Icon.jpeg from public/assets to dist/assets
-    const assetsToCopy = ['map.jpg', 'Bus_Icon.jpeg'];
+    // Prefer the smaller TV-sized map asset to reduce memory pressure on legacy TVs.
+    const assetsToCopy = [
+        {
+            source: 'BATT Platform Map - January 2026 (TV Size-BATT Static).png',
+            destination: 'map.png'
+        },
+        {
+            source: 'Bus_Icon.jpeg',
+            destination: 'Bus_Icon.jpeg'
+        }
+    ];
 
     for (const asset of assetsToCopy) {
-        const srcPath = path.join(publicAssetsDir, asset);
-        const destPath = path.join(assetsDir, asset);
+        const srcPath = path.join(publicAssetsDir, asset.source);
+        const destPath = path.join(assetsDir, asset.destination);
 
         if (fs.existsSync(srcPath)) {
             fs.copyFileSync(srcPath, destPath);
-            console.log(`Copied: ${asset}`);
+            console.log(`Copied: ${asset.destination}`);
         } else {
-            console.warn(`Warning: ${asset} not found at ${srcPath}`);
+            console.warn(`Warning: ${asset.source} not found at ${srcPath}`);
         }
     }
 }
@@ -84,7 +93,8 @@ async function buildJs(entry) {
 
     const rawCode = Buffer.from(output.contents).toString('utf8');
     const transformed = await downlevelJavaScript(rawCode, { filename: path.basename(entry.entryPath) });
-    const buffer = Buffer.from(transformed, 'utf8');
+    const withoutStrictMode = transformed.replace(/^(['"])use strict\1;\s*/, '');
+    const buffer = Buffer.from(withoutStrictMode, 'utf8');
     const hash = contentHash(buffer);
     const fileName = `${entry.key}.${hash}.js`;
     const filePath = path.join(assetsDir, fileName);
