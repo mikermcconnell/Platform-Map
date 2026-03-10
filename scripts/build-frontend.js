@@ -126,6 +126,13 @@ function writeHtml(entry, assetMap) {
         .replace(/%BUILD_ID%/g, new Date().toISOString());
     fs.writeFileSync(path.join(distDir, entry.outputHtml), html);
 
+    // Emit a default entry document so static hosts can serve the app at `/`
+    // without requiring an explicit rewrite configuration.
+    if (entry.outputHtml !== 'index.html') {
+        fs.writeFileSync(path.join(distDir, 'index.html'), html);
+        console.log('Built HTML: index.html');
+    }
+
     console.log(`Built HTML: ${entry.outputHtml}`);
 }
 

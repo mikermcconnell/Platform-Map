@@ -5,6 +5,10 @@
     "framework": null,
     "rewrites": [
         {
+            "source": "/",
+            "destination": "/index.html"
+        },
+        {
             "source": "/platform.map",
             "destination": "/platform.map.html"
         },
@@ -34,6 +38,19 @@
         },
         {
             "source": "/platform.map",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "no-cache"
+                },
+                {
+                    "key": "Content-Security-Policy",
+                    "value": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
+                }
+            ]
+        },
+        {
+            "source": "/",
             "headers": [
                 {
                     "key": "Cache-Control",
