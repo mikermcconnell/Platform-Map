@@ -1,7 +1,7 @@
 {
     "installCommand": "npm install",
-    "buildCommand": "npm run build:frontend",
-    "outputDirectory": "frontend/dist",
+    "buildCommand": "npm run build:react",
+    "outputDirectory": "dist",
     "framework": null,
     "rewrites": [
         {
@@ -10,7 +10,7 @@
         },
         {
             "source": "/platform.map",
-            "destination": "/platform.map.html"
+            "destination": "/index.html"
         },
         {
             "source": "/api/vehicles",
@@ -51,19 +51,6 @@
         },
         {
             "source": "/",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-cache"
-                },
-                {
-                    "key": "Content-Security-Policy",
-                    "value": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
-                }
-            ]
-        },
-        {
-            "source": "/(.*).html",
             "headers": [
                 {
                     "key": "Cache-Control",

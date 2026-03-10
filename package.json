@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "npm run build:frontend",
+    "build": "npm run build:react",
     "build:frontend": "node scripts/build-frontend.js",
     "dev": "npm run build:frontend && npx serve frontend/dist -l 3000",
     "dev:react": "vite",
