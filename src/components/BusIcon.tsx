@@ -41,14 +41,14 @@ const BusIcon: React.FC<BusIconProps> = ({ routeId, routeLabel }) => {
             />
             <div style={{
                 position: 'absolute',
-                top: '16%',
+                top: '13%',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 width: '62%',
                 padding: '5px 4px',
                 color: '#ffffff',
                 fontSize: routeLabel.length > 4 ? '17px' : '22px',
-                fontWeight: 700,
+                fontWeight: 800,
                 lineHeight: 1,
                 display: 'flex',
                 justifyContent: 'center',
