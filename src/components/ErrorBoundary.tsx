@@ -29,10 +29,31 @@ class ErrorBoundary extends Component<Props, State> {
     public render() {
         if (this.state.hasError) {
             return (
-                <div className="fixed inset-0 bg-red-900 text-white p-10 z-50 overflow-auto">
-                    <h1 className="text-3xl font-bold mb-4">Something went wrong.</h1>
-                    <h2 className="text-xl font-semibold">{this.state.error?.toString()}</h2>
-                    <pre className="mt-4 bg-black p-4 rounded text-sm overflow-x-auto">
+                <div style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 9999,
+                    overflow: 'auto',
+                    padding: '32px',
+                    backgroundColor: '#7f1d1d',
+                    color: '#ffffff',
+                    fontFamily: 'Arial, sans-serif',
+                }}>
+                    <h1 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '16px' }}>
+                        Something went wrong.
+                    </h1>
+                    <h2 style={{ fontSize: '22px', fontWeight: 600 }}>
+                        {this.state.error?.toString()}
+                    </h2>
+                    <pre style={{
+                        marginTop: '16px',
+                        padding: '16px',
+                        backgroundColor: '#000000',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        overflowX: 'auto',
+                        whiteSpace: 'pre-wrap',
+                    }}>
                         {this.state.errorInfo?.componentStack}
                     </pre>
                 </div>

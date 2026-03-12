@@ -12,10 +12,25 @@ const MAX_LOG_ENTRIES = 100;
 const logs: LogEntry[] = [];
 const listeners: ((logs: LogEntry[]) => void)[] = [];
 
+const stringifyArg = (arg: unknown) => {
+    if (arg instanceof Error) {
+        return `${arg.name}: ${arg.message}`;
+    }
+
+    if (typeof arg === 'object' && arg !== null) {
+        try {
+            return JSON.stringify(arg);
+        } catch {
+            const constructorName = (arg as { constructor?: { name?: string } }).constructor?.name;
+            return constructorName ? `[${constructorName}]` : '[object]';
+        }
+    }
+
+    return String(arg);
+};
+
 const addLog = (type: string, args: unknown[]) => {
-    const message = args.map(arg =>
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-    ).join(' ');
+    const message = args.map(stringifyArg).join(' ');
 
     const entry = {
         type,

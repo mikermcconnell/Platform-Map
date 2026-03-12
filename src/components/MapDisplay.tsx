@@ -9,6 +9,10 @@ import { classifyTerminalState, hasNonTerminalStopUpdate } from '../utils/termin
 const POLL_INTERVAL_MS = 10000;
 const TERMINAL_STICKY_MS = 90_000;
 const DEPARTED_STICKY_MS = 300_000;
+const scheduleNextPaint =
+    typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function'
+        ? window.requestAnimationFrame.bind(window)
+        : (callback: FrameRequestCallback) => window.setTimeout(callback, 16);
 
 // Calibration Data
 interface CalibrationPoint {
@@ -161,7 +165,7 @@ const MapDisplay: React.FC = () => {
             setVehicles(data);
             setIsLoading(false);
             // Enable smooth transitions after initial positions are painted
-            requestAnimationFrame(() => {
+            scheduleNextPaint(() => {
                 setAnimationReady(true);
             });
         });
