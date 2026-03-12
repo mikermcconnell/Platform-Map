@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchVehiclePositions, VehiclePosition } from '../services/gtfs';
 import ArrivalToasts from './ArrivalToasts';
 import BusIcon from './BusIcon';
-import { ROUTE_COLORS, DEFAULT_COLOR, TERMINAL_STOP_NAMES, GEOFENCE_OVERRIDES } from '../config/routes';
+import { TERMINAL_STOP_NAMES, GEOFENCE_OVERRIDES } from '../config/routes';
 import { classifyTerminalState, hasNonTerminalStopUpdate } from '../utils/terminalState';
 
 // Constants
@@ -270,7 +270,6 @@ const MapDisplay: React.FC = () => {
                 {/* Render Vehicles */}
                 {vehicles.map(v => {
                     const pos = getPixelPosition(v.lat, v.lon);
-                    const routeColor = (v.routeId && ROUTE_COLORS[v.routeId]) ? ROUTE_COLORS[v.routeId] : DEFAULT_COLOR;
 
                     // Determine Direction for Route 8 (8A/8B)
                     let displayRouteId = v.routeId || '';
@@ -314,7 +313,7 @@ const MapDisplay: React.FC = () => {
                                 <span className="departed-label">Departed</span>
                             )}
                             <div className={`bus-icon-wrapper${isAtTerminal ? ' at-terminal' : ''}`}>
-                                <BusIcon routeColor={routeColor} routeLabel={displayRouteId} />
+                                <BusIcon routeId={v.routeId} routeLabel={displayRouteId} />
                             </div>
                         </div>
                     );
